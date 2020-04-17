@@ -36,6 +36,9 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private IRolePermissionService rolePermissionService;
 
+    @Autowired
+    private PasswordHelper passwordHelper;
+
 
     @Override
     public List<User> findAll() {
@@ -77,6 +80,7 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     @Override
     public void saveUser(User user) {
+        user = passwordHelper.encryptPassword(user);
         userMapper.insert(user);
     }
 

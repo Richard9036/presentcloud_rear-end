@@ -52,12 +52,12 @@ public class UserRealm extends AuthorizingRealm {
         if (user == null) {
             throw new UnknownAccountException();//没找到帐号
         }
-        String passworld = userService.GetPasswordByUserName(user.getName());
+        String password = user.getPassword();
         //交给AuthenticatingRealm使用CredentialsMatcher进行密码匹配，如果觉得人家的不好可以自定义实现
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
                 user.getName(), //用户名
-                passworld, //密码
-                ByteSource.Util.bytes(user.getName() + passportService.getSalt(user.getName()) ),//salt=username+salt
+                password, //密码
+                ByteSource.Util.bytes(user.getName() + user.getSalt()),//salt=username+salt
                 getName()  //realm name
         );
         return authenticationInfo;

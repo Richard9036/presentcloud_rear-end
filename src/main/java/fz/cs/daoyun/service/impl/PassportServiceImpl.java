@@ -61,7 +61,7 @@ public class PassportServiceImpl  implements IPassportService  {
     @Override
     public void addPassport(Passport passport, User user ) {
 
-        passwordHelper.encryptPassword(passport, user);
+        passwordHelper.encryptPassword(user);
         passportMapper.insert(passport);
     }
 

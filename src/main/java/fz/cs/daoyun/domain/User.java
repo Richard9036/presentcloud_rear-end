@@ -35,6 +35,47 @@ public class User {
 
     private Date modificationdate;
 
+    private String password;
+
+    private String salt;
+
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", nickname='" + nickname + '\'' +
+                ", name='" + name + '\'' +
+                ", sex='" + sex + '\'' +
+                ", email='" + email + '\'' +
+                ", tel=" + tel +
+                ", school='" + school + '\'' +
+                ", classes='" + classes + '\'' +
+                ", schoolNumber='" + schoolNumber + '\'' +
+                ", creationdate=" + creationdate +
+                ", creator='" + creator + '\'' +
+                ", modifier='" + modifier + '\'' +
+                ", modificationdate=" + modificationdate +
+                ", password='" + password + '\'' +
+                ", salt='" + salt + '\'' +
+                '}';
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
     public Long getUserId() {
         return userId;
     }

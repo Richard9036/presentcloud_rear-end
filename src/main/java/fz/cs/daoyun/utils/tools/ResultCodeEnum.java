@@ -15,6 +15,7 @@ public enum ResultCodeEnum {
     INTERNAL_SERVER_ERROR("500", "服务器内部错误"),
     NOT_IMPLEMENTED("501", "业务异常");
 
+
     private String code;
     private String msg;
 

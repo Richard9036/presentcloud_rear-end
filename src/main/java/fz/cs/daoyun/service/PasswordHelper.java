@@ -50,11 +50,11 @@ public class PasswordHelper {
         this.hashIterations = hashIterations;
     }
 
-    public void encryptPassword(Passport passport, User user) {
-        String password = passport.getPassword();
-        String salt = passport.getSalt();
+    public User encryptPassword( User user) {
+        String password = user.getPassword();
+        String salt = user.getSalt();
         String CredentialsSalt = user.getName() + salt;
-        passport.setSalt(randomNumberGenerator.nextBytes().toHex());
+        user.setSalt(randomNumberGenerator.nextBytes().toHex());
 
         String newPassword = new SimpleHash(
                 algorithmName,
@@ -62,6 +62,7 @@ public class PasswordHelper {
                 ByteSource.Util.bytes(CredentialsSalt),
                 hashIterations).toHex();
 
-        passport.setPassword(newPassword);
+        user.setPassword(newPassword);
+        return user;
     }
 }
