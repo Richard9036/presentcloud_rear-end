@@ -76,15 +76,15 @@ public class UserController {
             UsernamePasswordToken token = new UsernamePasswordToken(username, password);
             subject.login(token);
         }catch (IncorrectCredentialsException e){
-            map.put("code",500);
+            map.put("code",100);
             map.put("msg","用户不存在或者密码错误");
             return map;
         }catch (AuthenticationException e) {
-            map.put("code",500);
+            map.put("code",200);
             map.put("msg","该用户不存在");
             return map;
         } catch (Exception e) {
-            map.put("code",500);
+            map.put("code",300);
             map.put("msg","未知异常");
             return map;
         }
@@ -156,6 +156,7 @@ public class UserController {
         }catch (Exception e){
             System.out.println(e);
             map.put("phoneloginError", "验证码错误");
+            map.put("token",SecurityUtils.getSubject().getSession().getId().toString());
         }
 
         return map;
@@ -166,26 +167,35 @@ public class UserController {
      * 用户注册
      * */
     @PostMapping("/register")
-    public String register(@RequestBody User user, @RequestParam("checkNumber") String checkNumber){
+    public Map register(@RequestBody User user, @RequestParam("checkNumber") String checkNumber){
+        Map<String,Object> map = new HashMap<>();
         //首先获取验证码
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
         String code = (String)session.getAttribute("checkNumber");
         System.out.println(code);
         if(code == null){
-            return "验证码为空";
+            map.put("code", "验证码为空");
         }else if(code.equals(checkNumber)){
+            if(userService.findByName(user.getName())!=null){
+                map.put("user", "用户已经存在");
+            }
+
            userService.saveUser(user);
-            return "注册成功";
-        }else return "验证码错误";
+            map.put("user", "注册成功");
+        }else
+            map.put("code", "验证码有误");
+
+        return map;
 
     }
 
 
     @GetMapping("/forgetpassword")
-    public String  forgetPassword(@RequestParam("telephoneNumber") String telephoneNumber, @RequestParam("checkNumber") String checkNumber,@RequestParam("password1")String password1){
-        if (telephoneNumber ==  null || checkNumber == null ){
-            return "电话号码为空";
+    public Map  forgetPassword(@RequestParam("telephoneNumber") String telephoneNumber, @RequestParam("checkNumber") String checkNumber,@RequestParam("password1")String password1){
+        Map<String,Object> map = new HashMap<>();
+        if (telephoneNumber ==  null  ){
+            map.put("tel","电话号码为空");
         }
         Long tel = Long.parseLong(telephoneNumber);
 
@@ -193,14 +203,15 @@ public class UserController {
         Session session = subject.getSession();
         String code = (String) session.getAttribute("checkNumber");
         if(code == null ||code.length() == 0){
-            return "验证码为空";
+            map.put("code","验证码为空");
         }else if(code.equals(checkNumber)){
             User user = userService.findByTel(tel);
             user.setPassword(password1);
             user = passwordHelper.encryptPassword(user);
-            return "修改成功";
+            map.put("succes","修改成功");
         }else
-            return "验证码有误";
+            map.put("code", "验证码有误");
+        return map;
     }
 
 
@@ -210,9 +221,9 @@ public class UserController {
      */
     @ResponseBody
     @PostMapping("/create")
-    @RequiresPermissions("user:create")
+//    @RequiresPermissions("user:create")
     public Result createUser(@RequestParam("username")String username, @RequestParam("mobile")String mobile, @RequestParam("password")String password){
-        if(userService.findByName(username)==null){
+        if(userService.findByName(username)!=null){
             return Result.failure(ResultCodeEnum.FAILED_USER_ALREADY_EXIST);
         }
         User user = new User();
@@ -221,7 +232,7 @@ public class UserController {
         user.setPassword(password);
         user.setName(username);
         user.setTel(Long.parseLong(mobile));
-        Date date = new Date();
+//        Date date = new Date();
 //        user.setCreationdate(date);
         userService.saveUser(user);
         return Result.success();
@@ -233,7 +244,7 @@ public class UserController {
     * */
     @ResponseBody
     @PostMapping("/userEdit")
-    @RequiresPermissions("user:update")
+//    @RequiresPermissions("user:update")
     public Result userEdit(@RequestBody User user, @RequestParam("username")String username, @RequestParam("mobile") String mobile){
         if(userService.findByName(username)!=null){
             return Result.failure(ResultCodeEnum.FAILED_USER_ALREADY_EXIST);
@@ -250,8 +261,8 @@ public class UserController {
     * */
     @ResponseBody
     @PostMapping("/deleteUser")
-    @RequiresPermissions("user:delete")
-    public Result deleteUser(String username){
+//    @RequiresPermissions("user:delete")
+    public Result deleteUser(@RequestParam("username") String username){
         if(userService.findByName(username) != null){
             userService.deleteUserByName(username);
             return Result.success();
@@ -264,7 +275,7 @@ public class UserController {
     * 查询所有用户, 无分页*/
     @ResponseBody
     @GetMapping("/findAllUsers")
-    @RequiresPermissions("user:view")
+//    @RequiresPermissions("user:view")
     public Result<List<User>> findAllUsers(){
         List<User> users = userService.findAll();
         return Result.success(users);
@@ -274,7 +285,7 @@ public class UserController {
     * 查找单个用户， 通过用户名*/
     @ResponseBody
     @RequestMapping("/findUser")
-    @RequiresPermissions("user:view")
+//    @RequiresPermissions("user:view")
     public Result<User> findUser(@RequestParam("username")String username){
         User user = userService.findByName(username);
         if(user != null){

@@ -19,20 +19,22 @@ public interface UserMapper {
     })
     int deleteByPrimaryKey(Long userId);
 
-    @Insert({
-        "insert into t_user (user_id, nickname, ",
-        "name, sex, email, password, salt ",
-        "tel, school, classes, ",
-        "school_number, CreationDate, ",
-        "Creator, Modifier, ",
-        "ModificationDate)",
-        "values (#{userId,jdbcType=BIGINT}, #{nickname,jdbcType=VARCHAR}, ",
-        "#{name,jdbcType=VARCHAR}, #{sex,jdbcType=CHAR}, #{email,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},#{salt,jdbcType=VARCHAR},",
-        "#{tel,jdbcType=BIGINT}, #{school,jdbcType=VARCHAR}, #{classes,jdbcType=VARCHAR}, ",
-        "#{schoolNumber,jdbcType=VARCHAR}, #{creationdate,jdbcType=TIMESTAMP}, ",
-        "#{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, ",
-        "#{modificationdate,jdbcType=TIMESTAMP})"
-    })
+//    @Insert({
+//        "insert into t_user (user_id, nickname, ",
+//        "name, sex, email, password, salt ",
+//        "tel, school, classes, ",
+//        "school_number, CreationDate, ",
+//        "Creator, Modifier, ",
+//        "ModificationDate)",
+//        "values (#{userId,jdbcType=BIGINT}, #{nickname,jdbcType=VARCHAR}, ",
+//        "#{name,jdbcType=VARCHAR}, #{sex,jdbcType=CHAR}, #{email,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},#{salt,jdbcType=VARCHAR},",
+//        "#{tel,jdbcType=BIGINT}, #{school,jdbcType=VARCHAR}, #{classes,jdbcType=VARCHAR}, ",
+//        "#{schoolNumber,jdbcType=VARCHAR}, #{creationdate,jdbcType=TIMESTAMP}, ",
+//        "#{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, ",
+//        "#{modificationdate,jdbcType=TIMESTAMP})"
+//    })
+    @Insert("insert into t_user(name, password, salt, tel) values(#{name,jdbcType=VARCHAR}, " +
+            " #{password,jdbcType=VARCHAR},#{salt,jdbcType=VARCHAR},#{tel,jdbcType=BIGINT})")
     int insert(User record);
 
     @InsertProvider(type= UserSqlProvider.class, method="insertSelective")

@@ -12,6 +12,9 @@ import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.type.JdbcType;
 
+import java.util.List;
+import java.util.Map;
+
 public interface DictMapper {
     @Delete({
         "delete from t_dict",
@@ -61,4 +64,36 @@ public interface DictMapper {
         "where dict_id = #{dictId,jdbcType=INTEGER}"
     })
     int updateByPrimaryKey(Dict record);
+
+
+    @Select("select * from t_dict")
+    List<Dict> selectAll();
+
+
+    @Select("select * from t_dict where type = #{type,jdbcType=VARCHAR}")
+    List<Dict> selectbytype(String type);
+
+
+    @Select("select * from t_dict where item_key = #{itemKey,jdbcType=VARCHAR}")
+    List<Dict> selectByItemKey(String itemKey);
+
+
+    @Select("select item_key, item_value from t_dict")
+    List<Map<String, String>> selectAllKV();
+
+
+    @Select("select item_key, item_value from t_dict where type = #{type,jdbcType=VARCHAR}")
+    List<Map<String, String>> selectKVByType(String type);
+
+    @Select("select item_key, item_value from t_dict where item_key = #{itemKey,jdbcType=VARCHAR}")
+    List<Map<String, String>> selectKVByitemkey(String itemKey);
+
+
+    @Update({
+            "update t_dict",
+            "set item_key = #{itemKey,jdbcType=VARCHAR},",
+            "item_value = #{itemValue,jdbcType=VARCHAR},",
+            "where dict_id = #{dictId,jdbcType=INTEGER}"
+    })
+    void alterKV(Integer id, String key, String value);
 }

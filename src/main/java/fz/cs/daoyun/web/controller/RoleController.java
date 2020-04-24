@@ -1,6 +1,9 @@
 package fz.cs.daoyun.web.controller;
 
 import fz.cs.daoyun.domain.Role;
+import fz.cs.daoyun.domain.RolePermission;
+import fz.cs.daoyun.service.IPermissionService;
+import fz.cs.daoyun.service.IRolePermissionService;
 import fz.cs.daoyun.service.IRoleService;
 import fz.cs.daoyun.utils.tools.Result;
 import fz.cs.daoyun.utils.tools.ResultCodeEnum;
@@ -18,11 +21,18 @@ public class RoleController {
     @Autowired
     private IRoleService roleService;
 
+    @Autowired
+    private IRolePermissionService rolePermissionService;
+
+    @Autowired
+    private IPermissionService permissionService;
+
+
     /*
     *查询所有的角色
      */
     @RequestMapping("/findAllRoles")
-    @RequiresPermissions("role:view")
+//    @RequiresPermissions("role:view")
     @ResponseBody
     public Result<List<Role>> findAllRoles(){
         List<Role> roles = roleService.findAll();
@@ -32,7 +42,7 @@ public class RoleController {
     /*
     * 添加角色*/
     @ResponseBody
-    @RequiresPermissions("role:create")
+//    @RequiresPermissions("role:create")
     @PostMapping("/create")
     public Result creteRole(@RequestParam("role")String role){
        Role r =  roleService.findByRoleName(role);
@@ -48,20 +58,34 @@ public class RoleController {
     * 删除角色
     * */
     @ResponseBody
-    @RequiresPermissions("role:delete")
+//    @RequiresPermissions("role:delete")
     @PostMapping("/delete")
     public Result deleteBatchByIds(@NotNull @RequestParam("rolename") String rolename) {
         roleService.deleteRole(rolename);
         return Result.success();
     }
 
+    /*
+    * 修改角色
+    * */
     @ResponseBody
-    @RequiresPermissions("role:update")
+//    @RequiresPermissions("role:update")
     @PostMapping("/update")
     public Result update(@Validated Role role) {
         roleService.saveRole(role);
         return Result.success();
     }
 
+
+    /*
+    * 查询角色权限
+    * */
+    @ResponseBody
+//    @RequiresPermissions("role:view")
+    @GetMapping("/getRolePermission")
+    public Result getRolePermission(@RequestParam("rolename")String rolename){
+        List<RolePermission>  permissions = rolePermissionService.findByRoleName(rolename);
+        return  Result.success(permissions);
+    }
 
 }
