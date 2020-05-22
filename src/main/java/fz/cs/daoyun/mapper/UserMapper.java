@@ -37,6 +37,46 @@ public interface UserMapper {
             " #{password,jdbcType=VARCHAR},#{salt,jdbcType=VARCHAR},#{tel,jdbcType=BIGINT})")
     int insert(User record);
 
+
+    @Insert({
+            "insert into t_user (" +
+                    "user_id, nickname, name, sex, email, password, " +
+                    "salt,  tel, school, classes, school_number, CreationDate, ",
+                    "Creator, Modifier, ModificationDate",
+            ") " +
+            "values(" +
+                    "#{userId,jdbcType=BIGINT}, #{nickname,jdbcType=VARCHAR}," +
+                    "#{name,jdbcType=VARCHAR}, #{sex,jdbcType=CHAR}, #{email,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},#{salt,jdbcType=VARCHAR},",
+                    "#{tel,jdbcType=BIGINT}, #{school,jdbcType=VARCHAR}, #{classes,jdbcType=VARCHAR}, ",
+                    "#{schoolNumber,jdbcType=VARCHAR}, #{creationdate,jdbcType=TIMESTAMP}, ",
+                    "#{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, ",
+                    "#{modificationdate,jdbcType=TIMESTAMP}",
+            ")"
+    })
+
+    void saveUserAllInfo(User user);
+
+    @Update({
+                "update t_user",
+                "set nickname = #{nickname,jdbcType=VARCHAR},",
+                "name = #{name,jdbcType=VARCHAR},",
+                "sex = #{sex,jdbcType=CHAR},",
+                "email = #{email,jdbcType=VARCHAR},",
+                "password = #{password,jdbcType=VARCHAR},",
+                "salt = #{salt,jdbcType=VARCHAR},",
+                "tel = #{tel,jdbcType=BIGINT},",
+                "school = #{school,jdbcType=VARCHAR},",
+                "classes = #{classes,jdbcType=VARCHAR},",
+                "school_number = #{schoolNumber,jdbcType=VARCHAR},",
+                "CreationDate = #{creationdate,jdbcType=TIMESTAMP},",
+                "Creator = #{creator,jdbcType=VARCHAR},",
+                "Modifier = #{modifier,jdbcType=VARCHAR},",
+                "ModificationDate = #{modificationdate,jdbcType=TIMESTAMP}",
+                "where user_id = #{userId,jdbcType=BIGINT}"
+    })
+    int insertAllinfo(User record);
+
+
     @InsertProvider(type= UserSqlProvider.class, method="insertSelective")
     int insertSelective(User record);
 
@@ -171,6 +211,8 @@ public interface UserMapper {
     List<User> selectAll();
 
 
+
+
     @Select({
             "select",
             "user_id, nickname, name, sex, email, password, salt,  tel, school, classes, school_number, CreationDate, ",
@@ -209,4 +251,6 @@ public interface UserMapper {
             "where name = #{name,jdbcType=VARCHAR}"
     })
     void deleteByName(String name);
+
+
 }

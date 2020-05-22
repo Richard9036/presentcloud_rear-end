@@ -1,5 +1,7 @@
 package fz.cs.daoyun.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import fz.cs.daoyun.domain.Passport;
 import fz.cs.daoyun.domain.Permission;
 import fz.cs.daoyun.domain.Role;
@@ -7,6 +9,7 @@ import fz.cs.daoyun.domain.User;
 import fz.cs.daoyun.mapper.RoleMapper;
 import fz.cs.daoyun.mapper.UserMapper;
 import fz.cs.daoyun.service.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,8 +83,23 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     @Override
     public void saveUser(User user) {
+//        String username = user.getName();
+//        username = StringUtils.lowerCase(username);
+//        String password = user.getPassword();
+//        password = StringUtils.lowerCase(password);
         user = passwordHelper.encryptPassword(user);
         userMapper.insert(user);
+    }
+
+    @Transactional
+    @Override
+    public void saveUserAllInfo(User user) {
+//        String username = user.getName();
+//        username = StringUtils.lowerCase(username);
+//        String password = user.getPassword();
+//        password = StringUtils.lowerCase(password);
+        user = passwordHelper.encryptPassword(user);
+        userMapper.insertAllinfo(user);
     }
 
     @Transactional
@@ -138,6 +156,24 @@ public class UserServiceImpl implements IUserService {
             }
         }
         return permissionName;
+    }
+
+    @Override
+    public void savePwd(User user) {
+        user = passwordHelper.encryptPassword(user);
+        userMapper.updateByPrimaryKey(user);
+    }
+
+    @Override
+    public List<User> findAllGoPage(int page, int size, boolean count) {
+        PageHelper.startPage(page, size, true);
+        return userMapper.selectAll();
+    }
+
+    @Override
+    public void createUserAllInfo(User user) {
+        user = passwordHelper.encryptPassword(user);
+        userMapper.saveUserAllInfo(user);
     }
 
 }

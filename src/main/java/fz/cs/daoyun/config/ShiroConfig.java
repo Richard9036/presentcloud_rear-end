@@ -1,8 +1,11 @@
 package fz.cs.daoyun.config;
 
+import fz.cs.daoyun.utils.shiro.MyShiroAuthFilter;
 import fz.cs.daoyun.utils.shiro.credentials.RetryLimitHashedCredentialsMatcher;
 import fz.cs.daoyun.utils.shiro.realm.UserRealm;
 import fz.cs.daoyun.utils.shiro.spring.SpringCacheManagerWrapper;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
+import org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
@@ -31,26 +34,30 @@ public class ShiroConfig {
 
 
     /*
-    * 本函数用于专门产生各 中Filter
-   * */
+     * 本函数用于专门产生各 中Filter
+     * */
     @Bean  //本注释用于让spring框架托管本函数返回的pojo
     public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
-      ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
-      shiroFilterFactoryBean.setSecurityManager(securityManager);
-      //自定义各种过滤器
+        ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
+        shiroFilterFactoryBean.setSecurityManager(securityManager);
+        //自定义各种过滤器
         Map<String, Filter> filters = new LinkedHashMap<>();
         Map<String , String> filterChainDefinitionMap = new LinkedHashMap<>();
+//        filters.put("authc",new MyShiroAuthFilter());
         shiroFilterFactoryBean.setFilters(filters);
         //配置realme
         /*
-        * anon: 无需登录可以访问
-        * authc ： 必须认证才可以访问
-        * user： 使用remeber me功能可以访问
-        * perms : 有权限才可以访问
-        * role: 具备响应的角色才可以访问
-        * */
+         * anon: 无需登录可以访问
+         * authc ： 必须认证才可以访问
+         * user： 使用remeber me功能可以访问
+         * perms : 有权限才可以访问
+         * role: 具备响应的角色才可以访问
+         * */
         //登录页面随时都可以访问
-        filterChainDefinitionMap.put("/user/login", "anon");
+        filterChainDefinitionMap.put("/login", "anon");
+        filterChainDefinitionMap.put("/*/*", "anon");
+        filterChainDefinitionMap.put("/*", "anon");
+
         //退出
         filterChainDefinitionMap.put("/logout", "logout");
         //需要授权的页面, /#下面的页面都需要授权之后才可以访问
@@ -60,10 +67,14 @@ public class ShiroConfig {
         //<!-- authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问-->
         filterChainDefinitionMap.put("/**", "user");
         //如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
-        shiroFilterFactoryBean.setLoginUrl("user/login");
+        shiroFilterFactoryBean.setLoginUrl("/login");
+
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }
+
+
+
 
     /**
      * 安全管理器
@@ -75,6 +86,7 @@ public class ShiroConfig {
     public DefaultWebSecurityManager securityManager(UserRealm userRealm, DefaultWebSessionManager sessionManager, SpringCacheManagerWrapper cacheManager) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(userRealm);
+//        securityManager.setRealm(userRealm);
         securityManager.setSessionManager(sessionManager);
         securityManager.setCacheManager(cacheManager);
         securityManager.setRememberMeManager(rememberMeManager());
@@ -99,7 +111,7 @@ public class ShiroConfig {
     @Bean
     public SimpleCookie sessionIdCookie() {
         SimpleCookie simpleCookie = new SimpleCookie("sid");
-        simpleCookie.setHttpOnly(true);
+        simpleCookie.setHttpOnly(false);
         simpleCookie.setMaxAge(-1);
         return simpleCookie;
     }
@@ -112,7 +124,7 @@ public class ShiroConfig {
     @Bean
     public SimpleCookie rememberMeCookie() {
         SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
-        simpleCookie.setHttpOnly(true);
+        simpleCookie.setHttpOnly(false);
         simpleCookie.setMaxAge(2592000);
         return simpleCookie;
     }
@@ -125,7 +137,7 @@ public class ShiroConfig {
     @Bean
     public CookieRememberMeManager rememberMeManager() {
         CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
-        cookieRememberMeManager.setCipherKey(Base64.decode("4AvVhmFLUs0KTA3Kprsdag=="));
+        cookieRememberMeManager.setCipherKey(Base64.decode("6ZmI6I2j5Y+R5aSn5ZOlAA=="));
         cookieRememberMeManager.setCookie(rememberMeCookie());
         return cookieRememberMeManager;
     }
@@ -200,6 +212,14 @@ public class ShiroConfig {
         credentialsMatcher.setStoredCredentialsHexEncoded(true);
         return credentialsMatcher;
     }
+
+//    @Bean
+//    public HashedCredentialsMatcher hashedCredentialsMatcher() {
+//        HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
+//        hashedCredentialsMatcher.setHashAlgorithmName("md5");
+//        hashedCredentialsMatcher.setHashIterations(2);
+//        return hashedCredentialsMatcher;
+//    }
 
     /**
      * Realm实现

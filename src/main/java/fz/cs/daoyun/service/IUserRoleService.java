@@ -36,4 +36,10 @@ public interface IUserRoleService {
     public List<Role> findRoleByUserId(Long userid);
 
     public List<Role> FindRoleByUsertel(Long tel);
+
+
+    void  deleteByUserId(Long userid) throws Exception;
+
+
+    void addRoleforUser(Integer userId, Integer roleId) throws  Exception;
 }

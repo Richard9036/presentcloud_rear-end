@@ -18,8 +18,7 @@ public class DaoyunApplication {
 
     public static void main(String[] args) {
         System.out.println("Hello");
-        SpringApplication.run(DaoyunApplication.class, args
-        );
+        SpringApplication.run(DaoyunApplication.class, args);
     }
 
 }

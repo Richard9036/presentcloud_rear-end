@@ -16,4 +16,6 @@ public interface IRoleService  {
     public void saveRole(Role role);
 
     public void deleteRole(String name);
+
+    void update(Role role) throws Exception;
 }

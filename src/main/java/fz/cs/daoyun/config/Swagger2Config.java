@@ -17,15 +17,15 @@ public class Swagger2Config {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("tech.wetech.admin.modules.system.web"))
+                .apis(RequestHandlerSelectors.basePackage("fz.cs.daoyun.web.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Wetech-Admin接口文档")
-                .description("Wetech-Admin | 权限管理系统")
+                .title("daoyun接口文档")
+                .description("daoyun | 后台管理系统")
                 .termsOfServiceUrl("https://github.com/cjbi")
                 .version("1.0")
                 .build();

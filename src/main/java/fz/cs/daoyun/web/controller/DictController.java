@@ -2,6 +2,7 @@ package fz.cs.daoyun.web.controller;
 
 
 import fz.cs.daoyun.domain.Dict;
+import fz.cs.daoyun.domain.DictInfo;
 import fz.cs.daoyun.service.IDictService;
 import fz.cs.daoyun.utils.tools.Result;
 import fz.cs.daoyun.utils.tools.ResultCodeEnum;
@@ -18,80 +19,84 @@ public class DictController {
     @Autowired
     private IDictService dictService;
 
+
     /*
-    * 查看所有字典
+    * 查看所有字典目錄
     * */
-    @GetMapping("/findAll")
+    @GetMapping("/findAllDict")
     public Result<List<Dict>> findAll(){
-       List<Dict> dicts  = dictService.findAll();
+       List<Dict> dicts  = dictService.findAllDict();
        return Result.success(dicts);
-    }
-    /*
-     * 查看所有字典键值对
-     * */
-    @GetMapping("/findAllKV")
-    public Result<List<Map<String, String>>> findAllKV(){
-        List<Map<String, String>> dicts  = dictService.findAllKV();
-        return Result.success(dicts);
     }
 
 
 
     /*通过字典类型查询响应的字典*/
-    @RequestMapping("/findByType")
+    @RequestMapping("/findDictByType")
     public Result<List<Dict>> findByType(@RequestParam("type") String type){
         List<Dict> dicts = dictService.findByDictType(type);
         return Result.success(dicts);
     }
 
-    /*通过字典类型查询响应的字典键值对*/
-    @RequestMapping("/findKVByType")
-    public Result<List<Map<String, String>>> findKVByType(@RequestParam("type") String type){
-        List<Map<String, String>> dicts = dictService.findByKVDictType(type);
-        return Result.success(dicts);
+    /*通过字典dict查询dictinfo*/
+    @PostMapping("/findByDictForDictInfo")
+    public Result<List<DictInfo>> findByDictForDictInfo(@RequestBody Dict dict){
+        try {
+            List<DictInfo> dictIns = dictService.findDictInfoByDictId(dict.getId());
+            return Result.success(dictIns);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.NOT_IMPLEMENTED);
+        }
     }
+
 
     /*通过字典的itemKey查询*/
-    @RequestMapping("/findByItemKey")
-    public Result<List<Dict>> findByItemKey(@RequestParam("itemKey")String itemKey){
-        List<Dict> dicts =  dictService.findByItemKey(itemKey);
-        return Result.success(dicts);
-    }
-
-    /*通过字典的itemKey查询键值对*/
-    @RequestMapping("/findKVByItemKey")
-    public Result<List<Map<String, String>>> findKVByItemKey(@RequestParam("itemKey")String itemKey){
-        List<Map<String, String>> dicts  =  dictService.findKVByItemKey(itemKey);
-        return Result.success(dicts);
+    @RequestMapping("/findDictInfoByItemKey")
+    public Result<DictInfo> findByItemKey(@RequestParam("itemKey")String itemKey){
+        DictInfo dictinfo = dictService.findByItemKey(itemKey);
+        return Result.success(dictinfo);
     }
 
 
-
-    /*通过ID查询*/
-    @RequestMapping("/findById")
-    public Result<Dict> findById(@RequestParam("id")Integer id){
-        Dict dict = dictService.findById(id);
-        return Result.success(dict);
+    /*添加字典Dict*/
+    @PostMapping("/addDict")
+    public Result addDict(@RequestBody Dict dict){
+        try {
+            dictService.addDict(dict);
+            return Result.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.NOT_IMPLEMENTED);
+        }
     }
 
-    @RequestMapping("/findKVById")
-    /*通过ID获取键值对*/
-    public Result findKVById(@RequestParam("id")Integer id){
-        HashMap<String, String> map = new HashMap<>();
-        Dict dict = dictService.findById(id);
-        map.put(dict.getItemKey(), dict.getItemValue());
-        return Result.success(map);
+
+    /*添加字典详细信息*/
+    @PostMapping("/addDictinfo")
+    public Result addDictinfo(@RequestParam("dictId")String dictId, @RequestBody DictInfo dictInfo){
+       Integer dictid = Integer.parseInt(dictId);
+       dictInfo.setDictId(dictid);
+        try {
+            dictService.addDictInfo(dictInfo);
+            return Result.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.NOT_IMPLEMENTED);
+        }
     }
 
 
     /*更新Dict*/
-    @PostMapping("/update")
-    public Result update(@RequestParam("dict")Dict dict){
-        boolean b = dictService.updateDict(dict);
-        if(b == false){
+    @PostMapping("/updateDictInfo")
+    public Result update(@RequestBody DictInfo dictInfo){
+        try {
+            dictService.updateDictInfo(dictInfo);
+            return Result.success();
+        } catch (Exception e) {
+            e.printStackTrace();
             return Result.failure(ResultCodeEnum.NOT_IMPLEMENTED);
         }
-        return Result.success();
 
     }
 
@@ -100,34 +105,66 @@ public class DictController {
     public Result updateKeyValue(@RequestParam("id")Integer id,@RequestParam("value")String value){
         boolean b = dictService.alteritemValue(id, value);
         if(b == false){
-            return Result.failure(ResultCodeEnum.NOT_IMPLEMENTED);
+            return Result.failure(ResultCodeEnum.PARAM_ERROR);
         }
         return Result.success();
     }
-
-    /*更新键值对*/
-    @PostMapping("updateKeyValue")
-    public Result updateKeyValue(@RequestParam("id")Integer id,@RequestParam("key")String key, @RequestParam("value")String value){
-        boolean b = dictService.alterKV(id, key, value);
-        if(b == false){
-            return Result.failure(ResultCodeEnum.NOT_IMPLEMENTED);
-        }
-        return Result.success();
-    }
-
-
 
 
 
     /*删除*/
-    @RequestMapping("delete")
-    public Result delete(@RequestParam("id")Integer id){
-        boolean b = dictService.deleteDict(id);
-        if(b == false){
+    @RequestMapping("/deleteDict")
+    public Result delete(@RequestParam("dictid")Integer dictid){
+        List<DictInfo> dictInfos = dictService.findDictInfoByDictId(dictid);
+        try {
+            for (DictInfo dictinfo :dictInfos
+                 ) {
+                dictService.deleteDictInfo(dictinfo.getId());
+            }
+
+            dictService.deleteDict(dictid);
+            return Result.success();
+        } catch (Exception e) {
+            e.printStackTrace();
             return Result.failure(ResultCodeEnum.NOT_IMPLEMENTED);
         }
-        return Result.success();
+    }
+
+    /*删除*/
+    @RequestMapping("/deleteDictInfo")
+    public Result deleteDictInfo(@RequestBody DictInfo dictInfo){
+
+        try {
+            dictService.deleteDictInfo(dictInfo.getId());
+            return Result.success();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return Result.failure(ResultCodeEnum.NOT_IMPLEMENTED);
+        }
+    }
+
+    /*
+     * 查看所有字典键值对
+     * */
+    @GetMapping("/findAllKV")
+    public Result<List<Map<String, String>>> findAllKV(){
+        List<Map<String, String>> dicts  = dictService.findAllKV();
+        return Result.success(dicts);
+    }
+    /*通过字典类型查询响应的字典键值对*/
+    @RequestMapping("/findKVByType")
+    public Result<List<Map<String, String>>> findKVByType(@RequestParam("type") String type){
+        List<Map<String, String>> dicts = dictService.findByKVDictType(type);
+        return Result.success(dicts);
     }
 
 
+
+
+    /*通过字典的itemKey查询键值对*/
+    @RequestMapping("/findKVByItemKey")
+    public Result<List<Map<String, String>>> findKVByItemKey(@RequestParam("itemKey")String itemKey){
+        List<Map<String, String>> dicts  =  dictService.findKVByItemKey(itemKey);
+        return Result.success(dicts);
+    }
 }

@@ -1,7 +1,7 @@
 package fz.cs.daoyun.mapper;
 
 import fz.cs.daoyun.domain.Dict;
-import fz.cs.daoyun.mapper.provider.DictSqlProvider;
+import fz.cs.daoyun.mapper.provider.ClassesSqlProvider;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.InsertProvider;
@@ -13,87 +13,53 @@ import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.type.JdbcType;
 
 import java.util.List;
-import java.util.Map;
 
 public interface DictMapper {
     @Delete({
         "delete from t_dict",
-        "where dict_id = #{dictId,jdbcType=INTEGER}"
+        "where id = #{id,jdbcType=INTEGER}"
     })
-    int deleteByPrimaryKey(Integer dictId);
+    int deleteByPrimaryKey(Integer id);
 
     @Insert({
-        "insert into t_dict (dict_id, item_key, ",
-        "item_value, type, ",
-        "sequence, isdefault)",
-        "values (#{dictId,jdbcType=INTEGER}, #{itemKey,jdbcType=VARCHAR}, ",
-        "#{itemValue,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, ",
-        "#{sequence,jdbcType=INTEGER}, #{isdefault,jdbcType=BIT})"
+        "insert into t_dict (id, name, ",
+        "describe)",
+        "values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, ",
+        "#{describe,jdbcType=VARCHAR})"
     })
     int insert(Dict record);
 
-    @InsertProvider(type= DictSqlProvider.class, method="insertSelective")
+    @InsertProvider(type= ClassesSqlProvider.DictSqlProvider.class, method="insertSelective")
     int insertSelective(Dict record);
 
     @Select({
         "select",
-        "dict_id, item_key, item_value, type, sequence, isdefault",
+        "id, name, describe",
         "from t_dict",
-        "where dict_id = #{dictId,jdbcType=INTEGER}"
+        "where id = #{id,jdbcType=INTEGER}"
     })
     @Results({
-        @Result(column="dict_id", property="dictId", jdbcType=JdbcType.INTEGER, id=true),
-        @Result(column="item_key", property="itemKey", jdbcType=JdbcType.VARCHAR),
-        @Result(column="item_value", property="itemValue", jdbcType=JdbcType.VARCHAR),
-        @Result(column="type", property="type", jdbcType=JdbcType.VARCHAR),
-        @Result(column="sequence", property="sequence", jdbcType=JdbcType.INTEGER),
-        @Result(column="isdefault", property="isdefault", jdbcType=JdbcType.BIT)
+        @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
+        @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
+        @Result(column="describe", property="describe", jdbcType=JdbcType.VARCHAR)
     })
-    Dict selectByPrimaryKey(Integer dictId);
+    Dict selectByPrimaryKey(Integer id);
 
-    @UpdateProvider(type=DictSqlProvider.class, method="updateByPrimaryKeySelective")
+    @UpdateProvider(type= ClassesSqlProvider.DictSqlProvider.class, method="updateByPrimaryKeySelective")
     int updateByPrimaryKeySelective(Dict record);
 
     @Update({
         "update t_dict",
-        "set item_key = #{itemKey,jdbcType=VARCHAR},",
-          "item_value = #{itemValue,jdbcType=VARCHAR},",
-          "type = #{type,jdbcType=VARCHAR},",
-          "sequence = #{sequence,jdbcType=INTEGER},",
-          "isdefault = #{isdefault,jdbcType=BIT}",
-        "where dict_id = #{dictId,jdbcType=INTEGER}"
+        "set name = #{name,jdbcType=VARCHAR},",
+          "describe = #{describe,jdbcType=VARCHAR}",
+        "where id = #{id,jdbcType=INTEGER}"
     })
     int updateByPrimaryKey(Dict record);
 
 
     @Select("select * from t_dict")
-    List<Dict> selectAll();
+    List<Dict> findall();
 
-
-    @Select("select * from t_dict where type = #{type,jdbcType=VARCHAR}")
-    List<Dict> selectbytype(String type);
-
-
-    @Select("select * from t_dict where item_key = #{itemKey,jdbcType=VARCHAR}")
-    List<Dict> selectByItemKey(String itemKey);
-
-
-    @Select("select item_key, item_value from t_dict")
-    List<Map<String, String>> selectAllKV();
-
-
-    @Select("select item_key, item_value from t_dict where type = #{type,jdbcType=VARCHAR}")
-    List<Map<String, String>> selectKVByType(String type);
-
-    @Select("select item_key, item_value from t_dict where item_key = #{itemKey,jdbcType=VARCHAR}")
-    List<Map<String, String>> selectKVByitemkey(String itemKey);
-
-
-    @Update({
-            "update t_dict",
-            "set item_key = #{itemKey,jdbcType=VARCHAR},",
-            "item_value = #{itemValue,jdbcType=VARCHAR},",
-            "where dict_id = #{dictId,jdbcType=INTEGER}"
-    })
-    void alterKV(Integer id, String key, String value);
+    @Select("select * from t_dict where name = #{name,jdbcType=VARCHAR}")
+    List<Dict> findByType(String name);
 }

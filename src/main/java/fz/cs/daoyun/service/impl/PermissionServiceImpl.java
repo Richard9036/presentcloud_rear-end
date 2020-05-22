@@ -48,4 +48,11 @@ public class PermissionServiceImpl implements IPermissionService {
     public void deletePermissionByName(String name) {
         permissionMapper.deleteByName(name);
     }
+
+    @Override
+    public void update(Permission permission) throws Exception {
+        permissionMapper.updateByPrimaryKey(permission);
+    }
+
+
 }

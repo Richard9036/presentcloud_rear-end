@@ -83,4 +83,20 @@ public interface UserRoleMapper {
             @Result(column="user_id", property="userId", jdbcType=JdbcType.BIGINT)
     })
     List<UserRole> selectByRoleId(Integer roleId);
+
+    @Delete({
+            "delete from t_user_role",
+            "where user_id = #{userid,jdbcType=BIGINT}"
+    })
+    void deleteByuserId(Long userid);
+
+
+
+    @Insert({
+            "insert into t_user_role (role_id, ",
+            "user_id)",
+            "values ( #{roleId,jdbcType=INTEGER}, ",
+            "#{userId,jdbcType=BIGINT})"
+    })
+    void addRole(Integer userId, Integer roleId);
 }

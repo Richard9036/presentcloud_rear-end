@@ -9,24 +9,24 @@ import java.io.Serializable;
 public class UserPhoneToken extends UsernamePasswordToken implements Serializable {
 
     private static final long serialVersionUID = 6293390033867929958L;
-    // 手机号码
-    private String phoneNum;
+    // 验证码
+    private String checkNumber;
     //无参构造
     public UserPhoneToken(){}
 
     //获取存入的值
     @Override
     public Object getPrincipal() {
-        if (phoneNum == null) {
+        if (checkNumber == null) {
             return getUsername();
         } else {
-            return getPhoneNum();
+            return checkNumber;
         }
     }
 
     @Override
     public Object getCredentials() {
-        if (phoneNum == null) {
+        if (checkNumber == null) {
             return getPassword();
         }else {
             return "ok";
@@ -34,24 +34,24 @@ public class UserPhoneToken extends UsernamePasswordToken implements Serializabl
 
     }
 
-    public UserPhoneToken(String phoneNum) {
-        this.phoneNum = phoneNum;
+    public UserPhoneToken(String checkNumber) {
+        this.checkNumber = checkNumber;
     }
 
     public UserPhoneToken(final String userName, final String password) {
         super(userName, password);
     }
 
-    public String getPhoneNum() {
-        return phoneNum;
+    public String getcheckNumber() {
+        return checkNumber;
     }
 
-    public void setPhoneNum(String phoneNum) {
-        this.phoneNum = phoneNum;
+    public void setcheckNumber(String checkNumber) {
+        this.checkNumber = checkNumber;
     }
     @Override
     public String toString() {
-        return "PhoneToken [PhoneNum=" + phoneNum + "]";
+        return "PhoneToken [PhoneNum=" + checkNumber + "]";
     }
 
 }

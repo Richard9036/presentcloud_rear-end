@@ -12,6 +12,8 @@ import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.type.JdbcType;
 
+import java.util.List;
+
 public interface MenuMapper {
     @Delete({
         "delete from t_menu",
@@ -67,4 +69,12 @@ public interface MenuMapper {
         "where menu_id = #{menuId,jdbcType=INTEGER}"
     })
     int updateByPrimaryKey(Menu record);
+
+
+    @Select("select * from t_menu")
+    List<Menu> selectAll();
+
+
+    @Select("select * from t_menu where  menu_name = #{menuName,jdbcType=VARCHAR}")
+    Menu selectByName(String name);
 }

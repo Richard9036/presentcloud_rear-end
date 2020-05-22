@@ -1,18 +1,21 @@
 package fz.cs.daoyun.utils.shiro.realm;
 
-import fz.cs.daoyun.domain.Passport;
+
 import fz.cs.daoyun.domain.User;
-import fz.cs.daoyun.service.IPassportService;
-import fz.cs.daoyun.service.IUserService;
+import fz.cs.daoyun.service.*;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import java.util.Set;
 
 @Component
 public class UserRealm extends AuthorizingRealm {
@@ -23,14 +26,21 @@ public class UserRealm extends AuthorizingRealm {
     @Autowired
     private IPassportService passportService;
 
+    @Autowired
+    private IPermissionService permissionService;
+
+    @Autowired
+    private IMenuService menuService;
+
 
     /*
     * 本函数用于执行授权逻辑
+    * 授权模块，获取用户角色和权限
     * */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         String username = (String) principals.getPrimaryPrincipal();
-
+//        Set<String> permissions = permissionService.findPermissionsByUsername(username);
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         authorizationInfo.setRoles(userService.queryRoles(username));
         authorizationInfo.setStringPermissions(userService.queryPermissions(username));
@@ -40,10 +50,14 @@ public class UserRealm extends AuthorizingRealm {
 
     /*
     * 本函数用于实现认证逻辑
+    * @param token AuthenticationToken 身份认证 token
+    * @return AuthenticationInfo 身份认证信息
+    * @throws AuthenticationException 认证相关异常
     * */
     @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {
 
+        UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
         String username = (String) token.getPrincipal();
         User user = null;
         if (!StringUtils.isEmpty(username)) {
@@ -54,10 +68,16 @@ public class UserRealm extends AuthorizingRealm {
         }
         String password = user.getPassword();
         //交给AuthenticatingRealm使用CredentialsMatcher进行密码匹配，如果觉得人家的不好可以自定义实现
+//        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
+//                user.getName(), //用户名
+//                password, //密码
+//                ByteSource.Util.bytes(user.getName() + user.getSalt()),//salt=username+salt
+//                getName()  //realm name
+//        );
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
                 user.getName(), //用户名
                 password, //密码
-                ByteSource.Util.bytes(user.getName() + user.getSalt()),//salt=username+salt
+//                ByteSource.Util.bytes(user.getName() + user.getSalt()),//salt=username+salt
                 getName()  //realm name
         );
         return authenticationInfo;
@@ -68,15 +88,41 @@ public class UserRealm extends AuthorizingRealm {
         super.clearCachedAuthorizationInfo(principals);
     }
 
+
     @Override
     public void clearCachedAuthenticationInfo(PrincipalCollection principals) {
         super.clearCachedAuthenticationInfo(principals);
     }
 
+//    @Override
+//    public void clearCache(PrincipalCollection principals) {
+//        super.clearCache(principals);
+//    }
+
+//    public void clearCachedAuthorizationInfo() {
+//        PrincipalCollection principals = SecurityUtils.getSubject().getPrincipals();
+//        super.clearCachedAuthorizationInfo(principals);
+//    }
+
+//
+//    public void clearCachedAuthenticationInfo() {
+//        PrincipalCollection principals = SecurityUtils.getSubject().getPrincipals();
+//        super.clearCachedAuthenticationInfo(principals);
+//    }
+
     @Override
     public void clearCache(PrincipalCollection principals) {
+        System.out.println("调用cache清理操作");
+        String username = (String) SecurityUtils.getSubject().getPrincipal();
+        User user = userService.findByName(username);
+        PrincipalCollection principals2 = new SimplePrincipalCollection(
+                username, getName());
+        System.out.println(principals2);
         super.clearCache(principals);
+
     }
+
+
 
     public void clearAllCachedAuthorizationInfo() {
         getAuthorizationCache().clear();

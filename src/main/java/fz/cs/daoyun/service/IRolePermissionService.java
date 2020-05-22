@@ -23,4 +23,8 @@ public interface IRolePermissionService {
     public List<Permission> findRolePermissionByRoleId(Integer id);
 
     public List<Role> findPermissionRoleByPermissionId(Integer id);
+
+    List<RolePermission> findRolePermissionsByroleId(int parseInt) throws Exception;
+
+    void deleteById(Integer id) throws Exception;
 }

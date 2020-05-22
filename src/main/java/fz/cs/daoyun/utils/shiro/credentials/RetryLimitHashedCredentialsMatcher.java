@@ -18,6 +18,8 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
 
     private Cache<String, AtomicInteger> passwordRetryCache;
 
+
+
     public RetryLimitHashedCredentialsMatcher(CacheManager cacheManager) {
         passwordRetryCache = cacheManager.getCache("passwordRetryCache");
     }
@@ -35,7 +37,8 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
             //if retry count > 5 throw
             throw new ExcessiveAttemptsException();
         }
-
+//        CustomCredentialsMatcher customCredentialsMatcher = new CustomCredentialsMatcher();
+//        boolean matches = customCredentialsMatcher.doCredentialsMatch(token, info);
         boolean matches = super.doCredentialsMatch(token, info);
         if (matches) {
             //clear retry count

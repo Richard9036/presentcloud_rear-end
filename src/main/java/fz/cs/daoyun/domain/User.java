@@ -11,33 +11,33 @@ public class User {
 
     private Long userId;
 
-    private String nickname;
+    private String nickname = null;
 
     private String name;
 
-    private String sex;
+    private String sex = "男";
 
-    private String email;
+    private String email = null;
 
     private Long tel;
 
-    private String school;
+    private String school = null;
 
-    private String classes;
+    private String classes = null;
 
-    private String schoolNumber;
+    private String schoolNumber = null;
 
-    private Date creationdate;
+    private Date creationdate = new Date() ;
 
-    private String creator;
+    private String creator = null;
 
-    private String modifier;
+    private String modifier = null;
 
-    private Date modificationdate;
+    private Date modificationdate = new Date();
 
     private String password;
 
-    private String salt;
+    private String salt = null;
 
 
     @Override

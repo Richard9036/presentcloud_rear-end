@@ -1,13 +1,13 @@
 package fz.cs.daoyun.service.impl;
 
 import fz.cs.daoyun.domain.Dict;
+import fz.cs.daoyun.domain.DictInfo;
+import fz.cs.daoyun.mapper.DictInfoMapper;
 import fz.cs.daoyun.mapper.DictMapper;
 import fz.cs.daoyun.service.IDictService;
-import fz.cs.daoyun.utils.tools.Result;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,127 +17,101 @@ public class DictServiceImpl implements IDictService {
 
     @Resource
     private DictMapper dictMapper;
-
+    @Resource
+    private DictInfoMapper dictInfoMapper;
 
     @Override
-    public List<Dict> findAll() {
-        List<Dict> dicts = dictMapper.selectAll();
-        return dicts;
+    public List<Dict> findAllDict() {
+        return dictMapper.findall();
     }
 
     @Override
     public List<Dict> findByDictType(String type) {
-        List<Dict> dicts = dictMapper.selectbytype(type);
-        return dicts;
+        return dictMapper.findByType(type);
     }
 
     @Override
-    public List<Dict> findByItemKey(String itemKey) {
-        return dictMapper.selectByItemKey(itemKey);
+    public DictInfo findByItemKey(String itemKey) {
+        return dictInfoMapper.selectByItemKey(itemKey);
     }
 
     @Override
-    public Dict findById(Integer dictId) {
-        return dictMapper.selectByPrimaryKey(dictId);
+    public DictInfo findDictInfoById(Integer dictId) {
+        return null;
     }
 
     @Override
-    public boolean updateDict(Dict dict) {
-        Dict d = dictMapper.selectByPrimaryKey(dict.getDictId());
-        d.setIsdefault(dict.getIsdefault());
-        d.setItemKey(dict.getItemKey());
-        d.setItemValue(dict.getItemValue());
-        d.setType(dict.getType());
-        d.setSequence(dict.getSequence());
-        boolean flag;
-        try {
-            dictMapper.updateByPrimaryKey(d);
-            flag =  true;
-        }catch (Exception e){
-            flag = false;
-        }
-        return flag;
-
+    public boolean updateDictInfo(DictInfo dictinfo) {
+         dictInfoMapper.updateByPrimaryKey(dictinfo);
+         return true;
     }
 
     @Override
-    public boolean alteritemValue(Integer dictId, String itemValue) {
-        Dict dict = dictMapper.selectByPrimaryKey(dictId);
-        dict.setItemValue(itemValue);
-        boolean flag;
-        try {
-            dictMapper.updateByPrimaryKey(dict);
-            flag =  true;
-        }catch (Exception e){
-            flag = false;
-        }
-        return flag;
+    public boolean alteritemValue(Integer infoid, String itemValue) {
+        DictInfo dictInfo = dictInfoMapper.selectByPrimaryKey(infoid);
+        dictInfo.setItemValue(itemValue);
+        dictInfoMapper.updateByPrimaryKey(dictInfo);
+
+        return true;
     }
 
     @Override
     public boolean altertype(Integer dictId, String type) {
-        Dict dict = dictMapper.selectByPrimaryKey(dictId);
-        dict.setType(type);
-
-        boolean flag;
-        try {
-            dictMapper.updateByPrimaryKey(dict);
-            flag =  true;
-        }catch (Exception e){
-            flag = false;
-        }
-        return flag;
+        return false;
     }
 
     @Override
     public boolean addDict(Dict dict) {
-
-        boolean flag;
-        try {
-            dictMapper.insert(dict);
-            flag =  true;
-        }catch (Exception e){
-            flag = false;
-        }
-        return flag;
+        dictMapper.insert(dict);
+        return true;
     }
 
     @Override
-    public boolean deleteDict(Integer dictId) {
-        boolean flag;
-        try {
-            dictMapper.deleteByPrimaryKey(dictId);
-            flag =  true;
-        }catch (Exception e){
-            flag = false;
+    public boolean deleteDict(Integer dictId) throws Exception {
+        dictMapper.deleteByPrimaryKey(dictId);
+        return true;
+    }
+
+    @Override
+    public boolean addDictInfo(DictInfo dictinfo) {
+        dictInfoMapper.insert(dictinfo);
+        return true;
+    }
+
+    @Override
+    public boolean deleteDictInfo(Integer dictinfoId) throws  Exception {
+        Integer id =  dictInfoMapper.deleteByPrimaryKey(dictinfoId);
+
+        if (id!=0) {
+            return true;
+        } else {
+            return false;
         }
-        return flag;
     }
 
     @Override
     public List<Map<String, String>> findAllKV() {
-        return dictMapper.selectAllKV();
+        return null;
     }
 
     @Override
     public List<Map<String, String>> findByKVDictType(String type) {
-        return dictMapper.selectKVByType(type);
+        return null;
     }
 
     @Override
     public List<Map<String, String>> findKVByItemKey(String itemKey) {
-        return dictMapper.selectKVByitemkey(itemKey);
+        return null;
     }
 
     @Override
     public boolean alterKV(Integer id, String key, String value) {
-        boolean flag;
-        try {
-            dictMapper.alterKV(id, key, value);
-            flag =  true;
-        }catch (Exception e){
-            flag = false;
-        }
-        return flag;
+        return false;
+    }
+
+    @Override
+    public List<DictInfo> findDictInfoByDictId(Integer dictid) {
+
+        return dictInfoMapper.selectByDictId(dictid);
     }
 }

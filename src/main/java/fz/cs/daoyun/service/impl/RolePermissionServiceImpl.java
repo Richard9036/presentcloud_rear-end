@@ -99,4 +99,15 @@ public class RolePermissionServiceImpl  implements IRolePermissionService {
         }
         return roles;
     }
+
+    @Override
+    public List<RolePermission> findRolePermissionsByroleId(int parseInt) throws  Exception{
+        List<RolePermission> rolePermissionList = rolePermissionMapper.selectByRoleId(parseInt);
+        return rolePermissionList;
+    }
+
+    @Override
+    public void deleteById(Integer id) throws Exception {
+        rolePermissionMapper.deleteByPrimaryKey(id);
+    }
 }

@@ -44,4 +44,9 @@ public class RoleImpl implements IRoleService {
         roleMapper.deleteByPrimaryKey(role.getRoleId());
 
     }
+
+    @Override
+    public void update(Role role) throws  Exception{
+        roleMapper.updateByPrimaryKey(role);
+    }
 }

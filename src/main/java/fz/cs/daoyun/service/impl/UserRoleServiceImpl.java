@@ -118,4 +118,20 @@ public class UserRoleServiceImpl  implements IUserRoleService {
         }
         return roles;
     }
+
+    @Override
+    public void deleteByUserId(Long userid) throws Exception {
+
+        userRoleMapper.deleteByuserId(userid);
+    }
+
+
+
+
+    @Override
+    public void addRoleforUser(Integer userId, Integer roleId) throws  Exception{
+
+        userRoleMapper.addRole(userId, roleId);
+    }
+
 }

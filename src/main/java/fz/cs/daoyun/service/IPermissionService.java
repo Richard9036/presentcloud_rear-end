@@ -17,4 +17,7 @@ public interface IPermissionService {
 
     public void deletePermissionByName(String name);
 
+    void update(Permission permission) throws Exception;
+
+//    void AddPermissionByParam(String authName, String module);
 }

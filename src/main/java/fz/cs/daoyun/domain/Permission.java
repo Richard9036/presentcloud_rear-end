@@ -5,9 +5,9 @@ import java.util.Date;
 public class Permission {
     private Integer permissionId;
 
-    private String type;
+    private String type;  //
 
-    private String name;
+    private String name;  //
 
     private Date creationdate;
 

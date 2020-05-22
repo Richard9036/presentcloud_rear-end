@@ -2,6 +2,7 @@ package fz.cs.daoyun.service;
 
 import fz.cs.daoyun.domain.Role;
 import fz.cs.daoyun.domain.User;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
@@ -22,6 +23,9 @@ public interface IUserService  {
 
     public void saveUser(User user);
 
+    @Transactional
+    void saveUserAllInfo(User user);
+
     public void deleteUserByUserId(Long id);
 
     public void deleteUserByTel(Long tel);
@@ -36,4 +40,11 @@ public interface IUserService  {
 
     Set<String> queryPermissions(String username);
 
+    void savePwd(User user);
+
+
+
+    List<User> findAllGoPage(int page, int size, boolean count);
+
+    void createUserAllInfo(User user);
 }

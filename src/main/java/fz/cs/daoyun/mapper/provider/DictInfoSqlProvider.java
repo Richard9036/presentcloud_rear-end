@@ -1,13 +1,17 @@
 package fz.cs.daoyun.mapper.provider;
 
-import fz.cs.daoyun.domain.Dict;
+import fz.cs.daoyun.domain.DictInfo;
 import org.apache.ibatis.jdbc.SQL;
 
-public class DictSqlProvider {
+public class DictInfoSqlProvider {
 
-    public String insertSelective(Dict record) {
+    public String insertSelective(DictInfo record) {
         SQL sql = new SQL();
-        sql.INSERT_INTO("t_dict");
+        sql.INSERT_INTO("t_dict_info");
+
+        if (record.getId() != null) {
+            sql.VALUES("id", "#{id,jdbcType=INTEGER}");
+        }
 
         if (record.getDictId() != null) {
             sql.VALUES("dict_id", "#{dictId,jdbcType=INTEGER}");
@@ -21,10 +25,6 @@ public class DictSqlProvider {
             sql.VALUES("item_value", "#{itemValue,jdbcType=VARCHAR}");
         }
 
-        if (record.getType() != null) {
-            sql.VALUES("type", "#{type,jdbcType=VARCHAR}");
-        }
-
         if (record.getSequence() != null) {
             sql.VALUES("sequence", "#{sequence,jdbcType=INTEGER}");
         }
@@ -36,9 +36,13 @@ public class DictSqlProvider {
         return sql.toString();
     }
 
-    public String updateByPrimaryKeySelective(Dict record) {
+    public String updateByPrimaryKeySelective(DictInfo record) {
         SQL sql = new SQL();
-        sql.UPDATE("t_dict");
+        sql.UPDATE("t_dict_info");
+
+        if (record.getDictId() != null) {
+            sql.SET("dict_id = #{dictId,jdbcType=INTEGER}");
+        }
 
         if (record.getItemKey() != null) {
             sql.SET("item_key = #{itemKey,jdbcType=VARCHAR}");
@@ -46,10 +50,6 @@ public class DictSqlProvider {
 
         if (record.getItemValue() != null) {
             sql.SET("item_value = #{itemValue,jdbcType=VARCHAR}");
-        }
-
-        if (record.getType() != null) {
-            sql.SET("type = #{type,jdbcType=VARCHAR}");
         }
 
         if (record.getSequence() != null) {
@@ -60,7 +60,7 @@ public class DictSqlProvider {
             sql.SET("isdefault = #{isdefault,jdbcType=BIT}");
         }
 
-        sql.WHERE("dict_id = #{dictId,jdbcType=INTEGER}");
+        sql.WHERE("id = #{id,jdbcType=INTEGER}");
 
         return sql.toString();
     }
