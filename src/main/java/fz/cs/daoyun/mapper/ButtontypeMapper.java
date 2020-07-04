@@ -11,7 +11,9 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.type.JdbcType;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public interface ButtontypeMapper {
     @Delete({
         "delete from t_buttontype",

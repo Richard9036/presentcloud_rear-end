@@ -11,9 +11,12 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.type.JdbcType;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+
+@Transactional
 public interface MenuMapper {
     @Delete({
         "delete from t_menu",
@@ -77,4 +80,8 @@ public interface MenuMapper {
 
     @Select("select * from t_menu where  menu_name = #{menuName,jdbcType=VARCHAR}")
     Menu selectByName(String name);
+
+
+    @Select("select menu_name from t_menu")
+    List<String> getNames();
 }

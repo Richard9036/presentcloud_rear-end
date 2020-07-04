@@ -3,10 +3,9 @@ package fz.cs.daoyun.web.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zhenzi.sms.ZhenziSmsClient;
-import fz.cs.daoyun.annotation.Limit;
-import fz.cs.daoyun.data.domain.LoginLog;
 import fz.cs.daoyun.domain.User;
 import fz.cs.daoyun.service.*;
+import fz.cs.daoyun.utils.shiro.spring.SpringCacheManagerWrapper;
 import fz.cs.daoyun.utils.shiro.token.UserPhoneToken;
 import fz.cs.daoyun.utils.tools.Md5Util;
 import fz.cs.daoyun.utils.tools.Result;
@@ -16,18 +15,14 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,16 +74,61 @@ public class LoginController  extends BaseController {
     /*
      * 普通登录， 放回登录信息的map
      * */
+//    @RequiresGuest
     @RequestMapping(value = "/login")
     public Map<String, Object> login(@RequestParam("username") String username, @RequestParam("password")String password){
         Map<String,Object> map = new HashMap<>();
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
-        try {
-            String pwd= Md5Util.encrypt(username, password);
+        String em = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$";
+        String ph = "^[1][34578]\\d{9}$";
+        String name = null;
+        if(username.matches(em)){
+            /*邮箱登录*/
+            User user = null;
+            try {
+                user = userService.findByEmail(username);
+            } catch (Exception e) {
+                e.printStackTrace();
+                map.put("code",100);
+                map.put("msg","用户不存在或者密码错误");
+                return map;
+            }
+            name = user.getName();
+        }else if (username.matches(ph)){
+            /*手机登录*/
+            User user = null;
+            try {
+                Long un = Long.parseLong(username);
+                user = userService.findByTel(un);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                map.put("code",100);
+                map.put("msg","用户不存在或者密码错误");
+                return map;
+            }
+            name = user.getName();
+        }else {
+            /*用户名登录*/
+            User user = null;
+            try {
+                user = userService.findByName(username);
+            } catch (Exception e) {
+                e.printStackTrace();
+                map.put("code",100);
+                map.put("msg","用户不存在或者密码错误");
+                return map;
+            }
+            name = user.getName();
+        }
 
-            UsernamePasswordToken token = new UsernamePasswordToken(username, pwd);
+        try {
+            String pwd= Md5Util.encrypt(name, password);
+            UsernamePasswordToken token = new UsernamePasswordToken(name, pwd);
+            token.setRememberMe(true);
+            System.out.println("login: " + token);
             subject.login(token);
+
         }catch (IncorrectCredentialsException e){
             map.put("code",100);
             map.put("msg","用户不存在或者密码错误");
@@ -114,6 +154,7 @@ public class LoginController  extends BaseController {
 
     /*用户未登录时的返回信息
      * */
+//    @RequiresGuest
     @RequestMapping("/unauth")
     public Map<String,Object> unauth(){
         Map<String,Object> map = new HashMap<>();
@@ -125,6 +166,7 @@ public class LoginController  extends BaseController {
     /*
      * 获取验证码
      * */
+//    @RequiresGuest
     @ResponseBody
     @GetMapping("/getcode")
     public boolean getCode(@RequestParam("telephoneNumber")String telephoneNumber){
@@ -161,6 +203,7 @@ public class LoginController  extends BaseController {
     /*
      * 获取验证码测试
      * */
+//    @RequiresGuest
     @ResponseBody
     @GetMapping("/getcodetest")
     public boolean getCodetest(){
@@ -195,6 +238,7 @@ public class LoginController  extends BaseController {
     /*
      * 从session获取验证码测试
      * */
+//    @RequiresGuest
     @ResponseBody
     @GetMapping("/getcodefromsessiontest")
     public boolean getcodefromsessiontest(){
@@ -215,6 +259,7 @@ public class LoginController  extends BaseController {
     /*
      * 手机登录
      * */
+//    @RequiresGuest
     @RequestMapping("/phonelogin")
     public  Map<String,Object>  phonelogin(@RequestParam("telephoneNumber") String telephoneNumber, @RequestParam("checkNumber") String checkNumber){
         Map<String,Object> map = new HashMap<>();
@@ -237,6 +282,7 @@ public class LoginController  extends BaseController {
     /*
      * 用户注册
      * */
+//    @RequiresGuest
     @PostMapping("/register")
     public Map register(@RequestBody User user, @RequestParam("checkNumber") String checkNumber){
         Map<String,Object> map = new HashMap<>();
@@ -264,6 +310,7 @@ public class LoginController  extends BaseController {
     /*
      * 用户注册
      * */
+//    @RequiresGuest
     @PostMapping("/register2")
     public  Map register_advance(
             @RequestParam("username") String username,
@@ -314,7 +361,7 @@ public class LoginController  extends BaseController {
 
     }
 
-
+//    @RequiresGuest
     @GetMapping("/forgetpassword")
     public Map  forgetPassword(@RequestParam("telephoneNumber") String telephoneNumber, @RequestParam("checkNumber") String checkNumber,@RequestParam("password1")String password1){
         Map<String,Object> map = new HashMap<>();
@@ -382,10 +429,16 @@ public class LoginController  extends BaseController {
     }
 
 
-
+//    @RequiresGuest
     @RequestMapping("/logout")
-    public void logout() {
-        Subject subject = SecurityUtils.getSubject();
-        subject.logout();
+    public Result logout() {
+        try {
+            Subject subject = SecurityUtils.getSubject();
+            subject.logout();
+            return Result.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.NOT_IMPLEMENTED);
+        }
     }
 }

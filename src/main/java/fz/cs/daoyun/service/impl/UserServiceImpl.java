@@ -15,10 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
+@Transactional
 @Service("UserService")
 public class UserServiceImpl implements IUserService {
     @Resource
@@ -45,7 +47,21 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public List<User> findAll() {
-        return userMapper.selectAll();
+        List<User> users = userMapper.selectAll();
+        List<User> us = new ArrayList<User>();
+        for (User user:users
+             ) {
+            List<Role> roles = userRoleService.findRoleByUserName(user.getName());
+            List<String> rolenames = new ArrayList<String>();
+            for (Role r:roles
+            ) {
+                rolenames.add(r.getRoleName());
+            }
+            user.setRolenames(rolenames);
+            us.add(user);
+        }
+
+        return us;
     }
 
     @Override
@@ -56,8 +72,16 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User findByName(String name) {
+        User user = userMapper.selectByName(name);
+        List<Role> roles = userRoleService.findRoleByUserName(user.getName());
+        List<String> rolenames = new ArrayList<String>();
+        for (Role r:roles
+             ) {
+            rolenames.add(r.getRoleName());
+        }
+        user.setRolenames(rolenames);
 
-        return userMapper.selectByName(name);
+        return user;
     }
 
     @Override
@@ -134,7 +158,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public Set<String> queryRoles(String username) {
-        Set<String> roleName = null;
+        Set<String> roleName = new HashSet<String>();
         List<Role> roles = userRoleService.findRoleByUserName(username);
         for (Role role: roles
              ) {
@@ -145,14 +169,15 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public Set<String> queryPermissions(String username) {
-        Set<String> permissionName = null;
+        Set<String> permissionName = new HashSet<String>();;
         List<Role> roles = userRoleService.findRoleByUserName(username);
         for (Role role :roles
              ) {
             List<Permission> permissions = rolePermissionService.findRolePermissionByRoleId(role.getRoleId());
             for (Permission permission: permissions
                  ) {
-                permissionName.add(permission.getName());
+               /* permissionName.add(permission.getName());*/
+                permissionName.add(permission.getType());
             }
         }
         return permissionName;
@@ -167,13 +192,35 @@ public class UserServiceImpl implements IUserService {
     @Override
     public List<User> findAllGoPage(int page, int size, boolean count) {
         PageHelper.startPage(page, size, true);
-        return userMapper.selectAll();
+        List<User> users = userMapper.selectAll();
+
+        for (User u:users
+             ) {
+            List<String> rolenames = new ArrayList<String>();
+            List<Role> roles = userRoleService.findRoleByUserName(u.getName());
+            for (Role r: roles
+                 ) {
+                rolenames.add(r.getRoleName());
+            }
+            u.setRolenames(rolenames);
+        }
+        return users;
     }
 
     @Override
     public void createUserAllInfo(User user) {
         user = passwordHelper.encryptPassword(user);
         userMapper.saveUserAllInfo(user);
+    }
+
+    @Override
+    public User exitsUser(String username) {
+        return userMapper.selectByName(username);
+    }
+
+    @Override
+    public User findByEmail(String username) {
+        return userMapper.selectByEmail(username);
     }
 
 }

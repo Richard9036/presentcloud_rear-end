@@ -2,6 +2,8 @@ package fz.cs.daoyun.domain;
 
 import java.util.Date;
 
+
+
 public class Sign {
     private Long id;
 
@@ -9,11 +11,25 @@ public class Sign {
 
     private Integer classId;
 
-    private Integer singnNum;
-
     private Date signTime;
 
     private Integer score;
+
+    private Integer singnTimes;
+
+    private Integer startSignId;
+
+    @Override
+    public String toString() {
+        return "Sign{" +
+                "id=" + id +
+                ", userName='" + userName + '\'' +
+                ", classId=" + classId +
+                ", signTime=" + signTime +
+                ", score=" + score +
+                ", singnTimes=" + singnTimes +
+                '}';
+    }
 
     public Long getId() {
         return id;
@@ -39,14 +55,6 @@ public class Sign {
         this.classId = classId;
     }
 
-    public Integer getSingnNum() {
-        return singnNum;
-    }
-
-    public void setSingnNum(Integer singnNum) {
-        this.singnNum = singnNum;
-    }
-
     public Date getSignTime() {
         return signTime;
     }
@@ -61,5 +69,21 @@ public class Sign {
 
     public void setScore(Integer score) {
         this.score = score;
+    }
+
+    public Integer getSingnTimes() {
+        return singnTimes;
+    }
+
+    public void setSingnTimes(Integer singnTimes) {
+        this.singnTimes = singnTimes;
+    }
+
+    public Integer getStartSignId() {
+        return startSignId;
+    }
+
+    public void setStartSignId(Integer startSignId) {
+        this.startSignId = startSignId;
     }
 }

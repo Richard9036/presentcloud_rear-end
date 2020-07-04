@@ -1,11 +1,7 @@
 package fz.cs.daoyun.service;
 
 
-import fz.cs.daoyun.data.domain.LoginLog;
-import fz.cs.daoyun.domain.User;
-
-import java.util.List;
-import java.util.Map;
+import fz.cs.daoyun.domain.LoginLog;
 
 /**
  * @author MrBird

@@ -5,8 +5,12 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.PasswordMatcher;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
+import org.apache.shiro.cache.Cache;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CustomCredentialsMatcher extends SimpleCredentialsMatcher {
+
 
 
     @Override

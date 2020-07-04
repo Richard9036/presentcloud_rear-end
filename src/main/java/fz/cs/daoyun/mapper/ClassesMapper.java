@@ -1,15 +1,9 @@
 package fz.cs.daoyun.mapper;
 
+
 import fz.cs.daoyun.domain.Classes;
 import fz.cs.daoyun.mapper.provider.ClassesSqlProvider;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 
 import java.util.List;
@@ -24,21 +18,21 @@ public interface ClassesMapper {
     @Insert({
         "insert into t_class (id, classes_id, ",
         "classes_name, school, ",
-        "department,  ",
-        " desc)",
+        "department, teacher_id, ",
+        "teacher_name)",
         "values (#{id,jdbcType=INTEGER}, #{classesId,jdbcType=INTEGER}, ",
         "#{classesName,jdbcType=VARCHAR}, #{school,jdbcType=VARCHAR}, ",
-        "#{department,jdbcType=VARCHAR},  ",
-        "#{desc,jdbcType=VARCHAR})"
+        "#{department,jdbcType=VARCHAR}, #{teacherId,jdbcType=VARCHAR}, ",
+        "#{teacherName,jdbcType=VARCHAR})"
     })
     int insert(Classes record);
 
-    @InsertProvider(type= ClassesSqlProvider.class, method="insertSelective")
+    @InsertProvider(type=ClassesSqlProvider.class, method="insertSelective")
     int insertSelective(Classes record);
 
     @Select({
         "select",
-        "id, classes_id, classes_name, school, department , desc",
+        "id, classes_id, classes_name, school, department, teacher_id, teacher_name, ",
         "from t_class",
         "where id = #{id,jdbcType=INTEGER}"
     })
@@ -48,7 +42,8 @@ public interface ClassesMapper {
         @Result(column="classes_name", property="classesName", jdbcType=JdbcType.VARCHAR),
         @Result(column="school", property="school", jdbcType=JdbcType.VARCHAR),
         @Result(column="department", property="department", jdbcType=JdbcType.VARCHAR),
-        @Result(column="desc", property="desc", jdbcType=JdbcType.VARCHAR)
+        @Result(column="teacher_id", property="teacherId", jdbcType=JdbcType.VARCHAR),
+        @Result(column="teacher_name", property="teacherName", jdbcType=JdbcType.VARCHAR),
     })
     Classes selectByPrimaryKey(Integer id);
 
@@ -61,18 +56,22 @@ public interface ClassesMapper {
           "classes_name = #{classesName,jdbcType=VARCHAR},",
           "school = #{school,jdbcType=VARCHAR},",
           "department = #{department,jdbcType=VARCHAR},",
-          "desc = #{desc,jdbcType=VARCHAR}",
+          "teacher_id = #{teacherId,jdbcType=VARCHAR},",
+          "teacher_name = #{teacherName,jdbcType=VARCHAR}",
         "where id = #{id,jdbcType=INTEGER}"
     })
     int updateByPrimaryKey(Classes record);
 
-
     @Select("select * from t_class")
-    List<Classes> selectAll();
+    List<fz.cs.daoyun.domain.Classes> selectAll();
 
     @Select("select * from  t_class where classes_id = #{classesId,jdbcType=INTEGER}")
-    Classes selectByClassId(Integer classId);
+    fz.cs.daoyun.domain.Classes selectByClassId(Integer classId);
 
     @Delete("delete  from t_class where classes_id = #{classesId,jdbcType=INTEGER}")
     void deleteByClassId(Integer classesId);
+
+
+    @Select("select classes_id, classes_name, school, department, teacher_id, teacher_name from t_class where teacher_id =  #{name,jdbcType=VARCHAR}")
+    List<fz.cs.daoyun.domain.Classes> selectByTeacherId(String name);
 }

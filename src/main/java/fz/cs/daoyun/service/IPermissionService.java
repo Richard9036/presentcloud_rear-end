@@ -19,5 +19,9 @@ public interface IPermissionService {
 
     void update(Permission permission) throws Exception;
 
+    Permission findByType(String p) throws Exception;
+
+    List<String> getTypes() throws Exception;
+
 //    void AddPermissionByParam(String authName, String module);
 }

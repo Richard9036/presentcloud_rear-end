@@ -1,6 +1,6 @@
 package fz.cs.daoyun.mapper.provider;
 
-import fz.cs.daoyun.data.domain.LoginLog;
+import fz.cs.daoyun.domain.LoginLog;
 import org.apache.ibatis.jdbc.SQL;
 
 public class LoginLogSqlProvider {

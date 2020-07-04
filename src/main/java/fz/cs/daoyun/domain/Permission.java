@@ -17,6 +17,19 @@ public class Permission {
 
     private Date modificationdate;
 
+    @Override
+    public String toString() {
+        return "Permission{" +
+                "permissionId=" + permissionId +
+                ", type='" + type + '\'' +
+                ", name='" + name + '\'' +
+                ", creationdate=" + creationdate +
+                ", creator='" + creator + '\'' +
+                ", modifier='" + modifier + '\'' +
+                ", modificationdate=" + modificationdate +
+                '}';
+    }
+
     public Integer getPermissionId() {
         return permissionId;
     }

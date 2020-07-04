@@ -27,4 +27,6 @@ public interface IRolePermissionService {
     List<RolePermission> findRolePermissionsByroleId(int parseInt) throws Exception;
 
     void deleteById(Integer id) throws Exception;
+
+    void addPermissionToRole(Integer roleId, Integer permissionId);
 }

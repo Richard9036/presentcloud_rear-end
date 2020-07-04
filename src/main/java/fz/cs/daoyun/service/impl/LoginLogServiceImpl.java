@@ -1,26 +1,20 @@
 package fz.cs.daoyun.service.impl;
 
 
-import fz.cs.daoyun.data.domain.LoginLog;
-import fz.cs.daoyun.domain.User;
+import fz.cs.daoyun.domain.LoginLog;
 import fz.cs.daoyun.mapper.LoginLogMapper;
 import fz.cs.daoyun.service.ILoginLogService;
 import fz.cs.daoyun.utils.tools.AddressUtil;
 import fz.cs.daoyun.utils.tools.HttpContextUtil;
 import fz.cs.daoyun.utils.tools.IpUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
-/**
- * @author MrBird
- */
+@Transactional
 @Service("loginLogService")
 public class LoginLogServiceImpl   implements ILoginLogService {
 

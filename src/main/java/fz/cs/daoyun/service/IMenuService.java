@@ -1,6 +1,7 @@
 package fz.cs.daoyun.service;
 
 import fz.cs.daoyun.domain.Menu;
+import fz.cs.daoyun.service.impl.MenuUtils;
 
 import java.util.List;
 
@@ -26,4 +27,15 @@ public interface IMenuService {
     public void deleteMenu(Integer id) throws Exception;
 
 
+    List<MenuUtils> findAllMenus();
+
+    void deleteSubMenu(Integer id) throws Exception;
+
+    List<Menu> findAllSubMenus(Integer parentid) throws Exception;
+
+    void updateSubMenu(Menu submenu) throws Exception;
+
+    void addSubMenu(Menu submenu) throws Exception;
+
+    List<String> getNames() throws Exception;
 }

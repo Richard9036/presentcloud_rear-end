@@ -1,6 +1,7 @@
 package fz.cs.daoyun.service;
 
 import fz.cs.daoyun.domain.Classes;
+import fz.cs.daoyun.domain.UserClasses;
 import fz.cs.daoyun.service.impl.ClassUserUtils;
 
 import java.util.HashMap;
@@ -20,8 +21,6 @@ public interface IClassesService {
     /*根据教师编号查询（用户名）*/
     public ClassUserUtils findByUserName(String name);
 
-
-
     /*添加班课*/
     public void addClasses(Classes classes) throws  Exception;
 
@@ -32,11 +31,19 @@ public interface IClassesService {
     public void updateByParam(Integer id, String classesName, String school, String department, String teacher, String desc) throws  Exception;
 
     /*删除班课*/
-    public void delete(Integer classesId);
+    public void delete(Integer classesId) throws Exception;
 
     void deleteByUsername(String username);
 
     void addClassToUser(String usernmae, Integer classid) throws Exception;
 
     void deleteClassToUser(String usernmae, Integer classid) throws Exception;
+
+    List<UserClasses> findUser_ClassByClassid(Integer classes_id) throws Exception;
+
+    void deleteUser_Class(Integer classesId) throws Exception;
+
+    List<Classes>  getCurrentusertClass(String name) throws Exception;
+
+    List<Classes> getCurrentUserCreateClass(String name) throws Exception;
 }

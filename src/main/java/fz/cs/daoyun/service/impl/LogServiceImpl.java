@@ -6,14 +6,12 @@ import fz.cs.daoyun.utils.po.Log;
 import fz.cs.daoyun.utils.service.impl.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
 
-/**
- * 日志服务
- * Created by cjbi on 2017/12/14.
- */
+@Transactional
 @Service
 public class LogServiceImpl extends BaseService<Log> implements LogService {
 

@@ -10,9 +10,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 
-/**
- * @author cjbi
- */
+
 @Configuration
 public class EhCacheConfig {
 

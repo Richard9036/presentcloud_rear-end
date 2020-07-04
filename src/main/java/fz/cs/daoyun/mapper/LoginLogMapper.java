@@ -1,10 +1,14 @@
 package fz.cs.daoyun.mapper;
 
-import fz.cs.daoyun.data.domain.LoginLog;
-import fz.cs.daoyun.data.mapper.LoginLogSqlProvider;
+
+import fz.cs.daoyun.domain.LoginLog;
+import fz.cs.daoyun.mapper.provider.LoginLogSqlProvider;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
+import org.springframework.transaction.annotation.Transactional;
 
+
+@Transactional
 public interface LoginLogMapper {
     @Delete({
         "delete from t_loginlog",
@@ -22,7 +26,7 @@ public interface LoginLogMapper {
     })
     int insert(LoginLog record);
 
-    @InsertProvider(type=LoginLogSqlProvider.class, method="insertSelective")
+    @InsertProvider(type= LoginLogSqlProvider.class, method="insertSelective")
     int insertSelective(LoginLog record);
 
     @Select({

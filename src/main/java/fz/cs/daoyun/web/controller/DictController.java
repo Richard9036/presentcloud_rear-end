@@ -6,6 +6,10 @@ import fz.cs.daoyun.domain.DictInfo;
 import fz.cs.daoyun.service.IDictService;
 import fz.cs.daoyun.utils.tools.Result;
 import fz.cs.daoyun.utils.tools.ResultCodeEnum;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +27,7 @@ public class DictController {
     /*
     * 查看所有字典目錄
     * */
+//    @RequiresUser
     @GetMapping("/findAllDict")
     public Result<List<Dict>> findAll(){
        List<Dict> dicts  = dictService.findAllDict();
@@ -32,6 +37,7 @@ public class DictController {
 
 
     /*通过字典类型查询响应的字典*/
+    @RequiresUser
     @RequestMapping("/findDictByType")
     public Result<List<Dict>> findByType(@RequestParam("type") String type){
         List<Dict> dicts = dictService.findByDictType(type);
@@ -39,6 +45,7 @@ public class DictController {
     }
 
     /*通过字典dict查询dictinfo*/
+    @RequiresUser
     @PostMapping("/findByDictForDictInfo")
     public Result<List<DictInfo>> findByDictForDictInfo(@RequestBody Dict dict){
         try {
@@ -52,6 +59,7 @@ public class DictController {
 
 
     /*通过字典的itemKey查询*/
+    @RequiresUser
     @RequestMapping("/findDictInfoByItemKey")
     public Result<DictInfo> findByItemKey(@RequestParam("itemKey")String itemKey){
         DictInfo dictinfo = dictService.findByItemKey(itemKey);
@@ -60,6 +68,7 @@ public class DictController {
 
 
     /*添加字典Dict*/
+    @RequiresPermissions("dict:add")
     @PostMapping("/addDict")
     public Result addDict(@RequestBody Dict dict){
         try {
@@ -73,6 +82,7 @@ public class DictController {
 
 
     /*添加字典详细信息*/
+    @RequiresPermissions("dict:add")
     @PostMapping("/addDictinfo")
     public Result addDictinfo(@RequestParam("dictId")String dictId, @RequestBody DictInfo dictInfo){
        Integer dictid = Integer.parseInt(dictId);
@@ -88,6 +98,7 @@ public class DictController {
 
 
     /*更新Dict*/
+    @RequiresPermissions("dict:update")
     @PostMapping("/updateDictInfo")
     public Result update(@RequestBody DictInfo dictInfo){
         try {
@@ -101,6 +112,7 @@ public class DictController {
     }
 
     /*更新值*/
+    @RequiresPermissions("dict:update")
     @PostMapping("updateValue")
     public Result updateKeyValue(@RequestParam("id")Integer id,@RequestParam("value")String value){
         boolean b = dictService.alteritemValue(id, value);
@@ -113,6 +125,7 @@ public class DictController {
 
 
     /*删除*/
+    @RequiresPermissions("dict:update")
     @RequestMapping("/deleteDict")
     public Result delete(@RequestParam("dictid")Integer dictid){
         List<DictInfo> dictInfos = dictService.findDictInfoByDictId(dictid);
@@ -131,6 +144,7 @@ public class DictController {
     }
 
     /*删除*/
+    @RequiresPermissions("dict:delete")
     @RequestMapping("/deleteDictInfo")
     public Result deleteDictInfo(@RequestBody DictInfo dictInfo){
 
@@ -146,12 +160,14 @@ public class DictController {
     /*
      * 查看所有字典键值对
      * */
+    @RequiresUser
     @GetMapping("/findAllKV")
     public Result<List<Map<String, String>>> findAllKV(){
         List<Map<String, String>> dicts  = dictService.findAllKV();
         return Result.success(dicts);
     }
     /*通过字典类型查询响应的字典键值对*/
+    @RequiresUser
     @RequestMapping("/findKVByType")
     public Result<List<Map<String, String>>> findKVByType(@RequestParam("type") String type){
         List<Map<String, String>> dicts = dictService.findByKVDictType(type);
@@ -162,6 +178,7 @@ public class DictController {
 
 
     /*通过字典的itemKey查询键值对*/
+    @RequiresUser
     @RequestMapping("/findKVByItemKey")
     public Result<List<Map<String, String>>> findKVByItemKey(@RequestParam("itemKey")String itemKey){
         List<Map<String, String>> dicts  =  dictService.findKVByItemKey(itemKey);

@@ -11,9 +11,13 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.type.JdbcType;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+
+
+@Transactional
 public interface RolePermissionMapper {
     @Delete({
         "delete from t_role_permission",
@@ -99,4 +103,13 @@ public interface RolePermissionMapper {
             @Result(column="permission_id", property="permissionId", jdbcType=JdbcType.INTEGER)
     })
     List<RolePermission> selectByPermissionId(Integer id);
+
+
+    @Insert({
+            "insert into t_role_permission ( role_id, ",
+            "permission_id)",
+            "values (#{roleId,jdbcType=INTEGER}, ",
+            "#{permissionId,jdbcType=INTEGER})"
+    })
+    void insertByParam(Integer roleId, Integer permissionId);
 }

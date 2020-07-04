@@ -3,7 +3,9 @@ import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 public class User {
@@ -39,6 +41,7 @@ public class User {
 
     private String salt = null;
 
+    private List<String> rolenames = new ArrayList<String>();
 
     @Override
     public String toString() {
@@ -58,7 +61,16 @@ public class User {
                 ", modificationdate=" + modificationdate +
                 ", password='" + password + '\'' +
                 ", salt='" + salt + '\'' +
+                ", rolenames=" + rolenames +
                 '}';
+    }
+
+    public List<String> getRolenames() {
+        return rolenames;
+    }
+
+    public void setRolenames(List<String> rolenames) {
+        this.rolenames = rolenames;
     }
 
     public String getPassword() {

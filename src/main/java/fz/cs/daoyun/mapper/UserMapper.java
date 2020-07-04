@@ -6,10 +6,13 @@ import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 
+
+@Transactional
 @Component
 @Mapper
 public interface UserMapper {
@@ -253,4 +256,13 @@ public interface UserMapper {
     void deleteByName(String name);
 
 
+    @Select({
+            "select",
+            "user_id, nickname, name, sex, email, password, salt, tel, school, classes, school_number, CreationDate, ",
+            "Creator, Modifier, ModificationDate",
+            "from t_user",
+            "where email = #{username,jdbcType=VARCHAR}"
+    })
+
+    User selectByEmail(String username);
 }

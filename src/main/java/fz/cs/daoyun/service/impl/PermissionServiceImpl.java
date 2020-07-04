@@ -54,5 +54,17 @@ public class PermissionServiceImpl implements IPermissionService {
         permissionMapper.updateByPrimaryKey(permission);
     }
 
+    @Override
+    public Permission findByType(String p)  throws  Exception{
+        Permission permission = permissionMapper.selectByType(p);
+        return permission;
+    }
+
+    @Override
+    public List<String> getTypes() throws  Exception {
+
+        return permissionMapper.getTypes();
+    }
+
 
 }

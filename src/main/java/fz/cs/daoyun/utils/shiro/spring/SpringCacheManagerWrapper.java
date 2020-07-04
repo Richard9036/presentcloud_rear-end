@@ -14,12 +14,7 @@ import org.springframework.cache.support.SimpleValueWrapper;
 
 import java.util.*;
 
-/**
- * 包装Spring cache抽象
- * <p>User: Zhang Kaitao
- * <p>Date: 13-3-23 上午8:26
- * <p>Version: 1.0
- */
+
 public class SpringCacheManagerWrapper implements CacheManager {
 
     private org.springframework.cache.CacheManager cacheManager;
@@ -43,27 +38,53 @@ public class SpringCacheManagerWrapper implements CacheManager {
         private org.springframework.cache.Cache springCache;
 
         SpringCacheWrapper(org.springframework.cache.Cache springCache) {
+
             this.springCache = springCache;
         }
 
         @Override
         public Object get(Object key) throws CacheException {
-            Object value = springCache.get(key);
-            if (value instanceof SimpleValueWrapper) {
-                return ((SimpleValueWrapper) value).get();
+            if(springCache != null){
+                Object value = springCache.get(key);
+//                System.out.println("------------get1: " + key + " :   " + value);
+
+                if (value instanceof SimpleValueWrapper) {
+
+//                value = ((SimpleValueWrapper) value).get();
+                    value = ((SimpleValueWrapper) value);
+                    if(value != null){
+                        value = ((SimpleValueWrapper) value).get();
+                    }
+//                    System.out.println("------------get2: " + key + " :   " + value);
+                    return value;
+
+                }
+
+                return value;
+            }else {
+                return null;
             }
-            return value;
+
+
         }
 
         @Override
         public Object put(Object key, Object value) throws CacheException {
-            springCache.put(key, value);
+
+            if(springCache != null){
+                springCache.put(key, value);
+//                System.out.println("++++++++++++++put:  " + key +"  :  "+value);
+            }
+
             return value;
         }
 
         @Override
         public Object remove(Object key) throws CacheException {
-            springCache.evict(key);
+            if(springCache != null){
+                springCache.evict(key);
+            }
+
             return null;
         }
 

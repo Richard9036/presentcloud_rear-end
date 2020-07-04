@@ -3,10 +3,9 @@ package fz.cs.daoyun.mapper.provider;
 import fz.cs.daoyun.domain.Classes;
 import fz.cs.daoyun.domain.Dict;
 import org.apache.ibatis.jdbc.SQL;
-
 public class ClassesSqlProvider {
 
-    public String insertSelective(Classes record) {
+    public String insertSelective(fz.cs.daoyun.domain.Classes record) {
         SQL sql = new SQL();
         sql.INSERT_INTO("t_class");
 
@@ -30,17 +29,15 @@ public class ClassesSqlProvider {
             sql.VALUES("department", "#{department,jdbcType=VARCHAR}");
         }
 
-//        if (record.getTeacher() != null) {
-//            sql.VALUES("teacher", "#{teacher,jdbcType=VARCHAR}");
-//        }
-//
-//        if (record.getTeacherId() != null) {
-//            sql.VALUES("teacher_id", "#{teacherId,jdbcType=INTEGER}");
-//        }
-
-        if (record.getDesc() != null) {
-            sql.VALUES("desc", "#{desc,jdbcType=VARCHAR}");
+        if (record.getTeacherName() != null) {
+            sql.VALUES("teacher_name", "#{teacher_name,jdbcType=VARCHAR}");
         }
+
+        if (record.getTeacherId() != null) {
+            sql.VALUES("teacher_id", "#{teacher_id,jdbcType=INTEGER}");
+        }
+
+
 
         return sql.toString();
     }
@@ -64,17 +61,15 @@ public class ClassesSqlProvider {
         if (record.getDepartment() != null) {
             sql.SET("department = #{department,jdbcType=VARCHAR}");
         }
-//
-//        if (record.getTeacher() != null) {
-//            sql.SET("teacher = #{teacher,jdbcType=VARCHAR}");
-//        }
-//
-//        if (record.getTeacherId() != null) {
-//            sql.SET("teacher_id = #{teacherId,jdbcType=INTEGER}");
-//        }
 
-        if (record.getDesc() != null) {
-            sql.SET("desc = #{desc,jdbcType=VARCHAR}");
+
+
+        if (record.getTeacherName() != null) {
+            sql.SET("teacher_name = #{teacher_name,jdbcType=VARCHAR}");
+        }
+
+        if (record.getTeacherId() != null) {
+            sql.SET("teacher_id = #{getTeacher_id,jdbcType=INTEGER}");
         }
 
         sql.WHERE("id = #{id,jdbcType=INTEGER}");

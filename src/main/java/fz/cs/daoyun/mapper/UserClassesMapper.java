@@ -11,9 +11,12 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.type.JdbcType;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+
+@Transactional
 public interface UserClassesMapper {
     @Delete({
         "delete from t_user_class",
@@ -61,10 +64,10 @@ public interface UserClassesMapper {
     List<UserClasses> selectAll();
 
     @Select("select * from t_user_class where  class_id = #{classId,jdbcType=INTEGER}")
-    UserClasses selectByClassId(Integer classesId);
+    List<UserClasses>  selectByClassId(Integer classesId);
 
     @Select("select * from t_user_class where user_name = #{userName,jdbcType=VARCHAR}")
-    UserClasses selectByUserName(String name);
+    List<UserClasses> selectByUserName(String name);
 
 
     @Delete({
@@ -77,8 +80,8 @@ public interface UserClassesMapper {
     @Insert({
             "insert into t_user_class ( class_id, ",
             "user_name)",
-            "values ( #{classId,jdbcType=INTEGER}, ",
-            "#{userName,jdbcType=VARCHAR})"
+            "values ( #{classid,jdbcType=INTEGER}, ",
+            "#{usernmae,jdbcType=VARCHAR})"
     })
     void insertClassToUser(String usernmae, Integer classid);
 
@@ -89,4 +92,11 @@ public interface UserClassesMapper {
                     "class_id = #{classId,jdbcType=INTEGER}"
     })
     void deleteClassToUser(String usernmae, Integer classid);
+
+
+    @Delete({
+            "delete from t_user_class",
+            "where class_id = #{classId,jdbcType=INTEGER}"
+    })
+    void deleteByClassId(Integer classesId);
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Transactional
@@ -84,9 +85,10 @@ public class UserRoleServiceImpl  implements IUserRoleService {
 
     @Override
     public List<Role> findRoleByUserName(String name) {
-        List<Role> roles = null;
+        List<Role> roles = new ArrayList<Role>();
         User user = userMapper.selectByName(name);
         List<UserRole> userRoles = userRoleMapper.selectByUserId(user.getUserId());
+//        System.out.println(userRoles);
         for(UserRole userRole : userRoles){
             Role role = roleService.findById(userRole.getRoleId());
             roles.add(role);

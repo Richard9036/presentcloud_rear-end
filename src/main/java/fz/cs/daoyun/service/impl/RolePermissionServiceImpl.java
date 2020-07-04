@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -39,6 +40,7 @@ public class RolePermissionServiceImpl  implements IRolePermissionService {
 
     @Override
     public  List<RolePermission> findByRoleId(Integer id) {
+//        List<RolePermission> rolePermissionList = rolePermissionMapper.selectByRoleId(id);
         return rolePermissionMapper.selectByRoleId(id);
     }
 
@@ -75,7 +77,7 @@ public class RolePermissionServiceImpl  implements IRolePermissionService {
 
     @Override
     public List<Permission>  findRolePermissionByRoleId(Integer id) {
-        List<Permission> permissions = null;
+        List<Permission> permissions = new ArrayList<Permission>();
         List<RolePermission> rolePermissions = this.findByRoleId(id);
         for (RolePermission rolePermission: rolePermissions
         ) {
@@ -109,5 +111,10 @@ public class RolePermissionServiceImpl  implements IRolePermissionService {
     @Override
     public void deleteById(Integer id) throws Exception {
         rolePermissionMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public void addPermissionToRole(Integer roleId, Integer permissionId) {
+        rolePermissionMapper.insertByParam(roleId, permissionId);
     }
 }

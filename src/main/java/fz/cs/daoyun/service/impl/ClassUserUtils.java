@@ -18,14 +18,14 @@ public class ClassUserUtils {
 
     private Integer teacherId;
 
-    private String desc;
+
 
 
     public void addClasses(Classes classes) {
         this.classesId = classes.getClassesId();
         this.classesName = classes.getClassesName();
         this.department = classes.getDepartment();
-        this.desc = classes.getDesc();
+
         this.id = classes.getId();
         this.school = classes.getSchool();
 
@@ -47,7 +47,6 @@ public class ClassUserUtils {
                 ", department='" + department + '\'' +
                 ", teacher='" + teacher + '\'' +
                 ", teacherId=" + teacherId +
-                ", desc='" + desc + '\'' +
                 '}';
     }
 
@@ -107,13 +106,7 @@ public class ClassUserUtils {
         this.teacherId = teacherId;
     }
 
-    public String getDesc() {
-        return desc;
-    }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
 
 
 }

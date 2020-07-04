@@ -1,7 +1,6 @@
 package fz.cs.daoyun.utils.aspect;
 
 import fz.cs.daoyun.annotation.SystemLog;
-import fz.cs.daoyun.data.domain.LoginLog;
 import fz.cs.daoyun.utils.po.Log;
 import fz.cs.daoyun.utils.tools.JsonUtil;
 import fz.cs.daoyun.utils.tools.PageResultSet;

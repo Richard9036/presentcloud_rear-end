@@ -17,7 +17,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 public class DaoyunApplication {
 
     public static void main(String[] args) {
-        System.out.println("Hello");
+        System.out.println("welcom to DaoYun");
         SpringApplication.run(DaoyunApplication.class, args);
     }
 

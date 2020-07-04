@@ -47,4 +47,8 @@ public interface IUserService  {
     List<User> findAllGoPage(int page, int size, boolean count);
 
     void createUserAllInfo(User user);
+
+    User exitsUser(String username);
+
+    User findByEmail(String username);
 }

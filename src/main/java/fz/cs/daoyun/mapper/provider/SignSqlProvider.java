@@ -21,16 +21,21 @@ public class SignSqlProvider {
             sql.VALUES("class_id", "#{classId,jdbcType=INTEGER}");
         }
 
-        if (record.getSingnNum() != null) {
-            sql.VALUES("singn_num", "#{singnNum,jdbcType=INTEGER}");
-        }
-
         if (record.getSignTime() != null) {
             sql.VALUES("sign_time", "#{signTime,jdbcType=TIMESTAMP}");
         }
 
         if (record.getScore() != null) {
             sql.VALUES("score", "#{score,jdbcType=INTEGER}");
+        }
+
+        if (record.getSingnTimes() != null) {
+            sql.VALUES("singn_times", "#{singnTimes,jdbcType=INTEGER}");
+        }
+
+
+        if (record.getStartSignId() != null) {
+            sql.VALUES("start_sign_id", "#{startSignId,jdbcType=INTEGER}");
         }
 
         return sql.toString();
@@ -48,16 +53,20 @@ public class SignSqlProvider {
             sql.SET("class_id = #{classId,jdbcType=INTEGER}");
         }
 
-        if (record.getSingnNum() != null) {
-            sql.SET("singn_num = #{singnNum,jdbcType=INTEGER}");
-        }
-
         if (record.getSignTime() != null) {
             sql.SET("sign_time = #{signTime,jdbcType=TIMESTAMP}");
         }
 
         if (record.getScore() != null) {
             sql.SET("score = #{score,jdbcType=INTEGER}");
+        }
+
+        if (record.getSingnTimes() != null) {
+            sql.SET("singn_times = #{singnTimes,jdbcType=INTEGER}");
+        }
+
+        if (record.getStartSignId() != null) {
+            sql.SET("start_sign_id = #{startSignId,jdbcType=INTEGER}");
         }
 
         sql.WHERE("id = #{id,jdbcType=BIGINT}");

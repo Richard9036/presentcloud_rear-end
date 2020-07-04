@@ -2,20 +2,21 @@ package fz.cs.daoyun.service.impl;
 
 
 import fz.cs.daoyun.domain.Classes;
-//import fz.cs.daoyun.domain.UserClasses;
 import fz.cs.daoyun.domain.User;
 import fz.cs.daoyun.domain.UserClasses;
 import fz.cs.daoyun.mapper.ClassesMapper;
 import fz.cs.daoyun.mapper.UserClassesMapper;
 import fz.cs.daoyun.mapper.UserMapper;
 import fz.cs.daoyun.service.IClassesService;
-//import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
+
+@Transactional
 @Service
 public class ClassesServiceImpl  implements IClassesService {
     @Resource
@@ -50,18 +51,24 @@ public class ClassesServiceImpl  implements IClassesService {
 
     @Override
     public Classes findByClassID(Integer classesId) {
-        return  classesMapper.selectByPrimaryKey(classesId);
+        return  classesMapper.selectByClassId(classesId);
     }
 
     @Override
     public ClassUserUtils findUserClassByClassID(Integer classesId) {
         ClassUserUtils classUserUtils = new ClassUserUtils();
-        UserClasses userClasses = userClassesMapper.selectByClassId(classesId);
-        String userName = userClasses.getUserName();
+        List<UserClasses> userClasses = userClassesMapper.selectByClassId(classesId);
+        for (UserClasses u :userClasses
+             ) {
+            String userName = u.getUserName();
+            User user = userMapper.selectByName(userName);
+            classUserUtils.addUser(user);
+        }
+
         Classes classes = classesMapper.selectByPrimaryKey(classesId);
-        User user = userMapper.selectByName(userName);
+
         classUserUtils.addClasses(classes);
-        classUserUtils.addUser(user);
+
 
         return classUserUtils;
     }
@@ -69,12 +76,19 @@ public class ClassesServiceImpl  implements IClassesService {
     @Override
     public ClassUserUtils findByUserName(String name) {
         User user = userMapper.selectByName(name);
-        UserClasses userClasses = userClassesMapper.selectByUserName(name);
-        Integer classId = userClasses.getClassId();
-        Classes classes = classesMapper.selectByClassId(classId);
+        List<UserClasses> userClasses = userClassesMapper.selectByUserName(name);
         ClassUserUtils classUserUtils = new ClassUserUtils();
-        classUserUtils.addUser(user);
-        classUserUtils.addClasses(classes);
+        for (UserClasses u :userClasses
+             ) {
+            Integer classId = u.getClassId();
+            Classes classes = classesMapper.selectByClassId(classId);
+
+            classUserUtils.addUser(user);
+            classUserUtils.addClasses(classes);
+        }
+
+
+
         return classUserUtils;
     }
 
@@ -96,16 +110,21 @@ public class ClassesServiceImpl  implements IClassesService {
         classes.setClassesName(classesName);
         classes.setDepartment(department);
         classes.setSchool(school);
-        classes.setDesc(desc);
-        UserClasses userClasses = userClassesMapper.selectByClassId(classes.getClassesId());
-        userClasses.setUserName(teacher);
+        List<UserClasses> userClasses = userClassesMapper.selectByClassId(classes.getClassesId());
         classesMapper.updateByPrimaryKey(classes);
-        userClassesMapper.updateByPrimaryKey(userClasses);
+        for (UserClasses u : userClasses
+             ) {
+            u.setUserName(teacher);
+
+            userClassesMapper.updateByPrimaryKey(u);
+        }
+
+
 
     }
 
     @Override
-    public void delete(Integer classesId) {
+    public void delete(Integer classesId)throws  Exception {
         classesMapper.deleteByClassId(classesId);
     }
 
@@ -122,5 +141,32 @@ public class ClassesServiceImpl  implements IClassesService {
     @Override
     public void deleteClassToUser(String usernmae, Integer classid) throws  Exception{
         userClassesMapper.deleteClassToUser(usernmae, classid);
+    }
+
+    @Override
+    public  List<UserClasses> findUser_ClassByClassid(Integer classes_id) throws Exception{
+        return userClassesMapper.selectByClassId(classes_id);
+    }
+
+    @Override
+    public void deleteUser_Class(Integer classesId)  throws  Exception{
+        userClassesMapper.deleteByClassId(classesId);
+    }
+
+    @Override
+    public List<Classes>  getCurrentusertClass(String name) throws  Exception {
+        List<Classes> classesList = new ArrayList<Classes>();
+        List<UserClasses> userClasses = userClassesMapper.selectByUserName(name);
+        for (UserClasses uc:userClasses
+             ) {
+            Classes classes = classesMapper.selectByClassId(uc.getClassId());
+            classesList.add(classes);
+        }
+        return classesList;
+    }
+
+    @Override
+    public List<Classes> getCurrentUserCreateClass(String name) throws  Exception {
+        return classesMapper.selectByTeacherId(name);
     }
 }

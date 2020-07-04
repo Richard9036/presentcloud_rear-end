@@ -1,6 +1,7 @@
 package fz.cs.daoyun.domain;
 
 public class Classes {
+
     private Integer id;
 
     private Integer classesId;
@@ -11,11 +12,22 @@ public class Classes {
 
     private String department;
 
-//    private String teacher;
-//
-//    private Integer teacherId;
+    private String teacherId;
 
-    private String desc;
+    private String teacherName;
+
+    @Override
+    public String toString() {
+        return "Classes{" +
+                "id=" + id +
+                ", classesId=" + classesId +
+                ", classesName='" + classesName + '\'' +
+                ", school='" + school + '\'' +
+                ", department='" + department + '\'' +
+                ", teacherId='" + teacherId + '\'' +
+                ", teacherName='" + teacherName + '\'' +
+                '}';
+    }
 
     public Integer getId() {
         return id;
@@ -57,27 +69,20 @@ public class Classes {
         this.department = department == null ? null : department.trim();
     }
 
-//    public String getTeacher() {
-//        return teacher;
-//    }
-//
-//    public void setTeacher(String teacher) {
-//        this.teacher = teacher == null ? null : teacher.trim();
-//    }
-//
-//    public Integer getTeacherId() {
-//        return teacherId;
-//    }
-//
-//    public void setTeacherId(Integer teacherId) {
-//        this.teacherId = teacherId;
-//    }
-
-    public String getDesc() {
-        return desc;
+    public String getTeacherId() {
+        return teacherId;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc == null ? null : desc.trim();
+    public void setTeacherId(String teacherId) {
+        this.teacherId = teacherId == null ? null : teacherId.trim();
     }
+
+    public String getTeacherName() {
+        return teacherName;
+    }
+
+    public void setTeacherName(String teacherName) {
+        this.teacherName = teacherName == null ? null : teacherName.trim();
+    }
+
 }

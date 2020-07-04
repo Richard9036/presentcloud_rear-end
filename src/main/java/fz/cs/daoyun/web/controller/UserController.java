@@ -1,18 +1,22 @@
 package fz.cs.daoyun.web.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
+import fz.cs.daoyun.domain.Role;
 import fz.cs.daoyun.domain.User;
+import fz.cs.daoyun.domain.UserRole;
 import fz.cs.daoyun.service.*;
 import fz.cs.daoyun.service.impl.ClassesServiceImpl;
+import fz.cs.daoyun.utils.dto.UserRoleWrapper;
 import fz.cs.daoyun.utils.tools.Md5Util;
 import fz.cs.daoyun.utils.tools.Result;
 import fz.cs.daoyun.utils.tools.ResultCodeEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.*;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.session.Session;
@@ -49,12 +53,15 @@ public class UserController {
     @Autowired
     private IClassesService classesService;
 
+
+    @Autowired
+    private IRoleService roleService;
     /*
     添加用户
      */
     @ResponseBody
     @PostMapping("/create")
-//    @RequiresPermissions("user:create")
+    @RequiresPermissions("user:add")
     public Result createUser(
             @RequestParam("username")String username,
             @RequestParam("mobile")String mobile,
@@ -66,7 +73,7 @@ public class UserController {
             String school_number,
             String email
     ) {
-        if(userService.findByName(username)!=null){
+        if(userService.exitsUser(username)!=null){
             return Result.failure(ResultCodeEnum.FAILED_USER_ALREADY_EXIST);
         }
         User user = new User();
@@ -98,6 +105,7 @@ public class UserController {
     /*
     * 修改用户
     * */
+    @RequiresPermissions("user:update")
     @ResponseBody
     @PostMapping("/userEdit")
     public Result userEdit(
@@ -110,7 +118,7 @@ public class UserController {
 
         System.out.println("调用了它");
         User user = userService.findByName(name);
-        user.setPassword(password);
+//        user.setPassword(password);
         Long tel = Long.parseLong(mobile);
         user.setTel(tel);
         user.setNickname(nickname);
@@ -122,7 +130,7 @@ public class UserController {
         return  Result.success();
     }
 
-
+    @RequiresPermissions("user:update")
     @ResponseBody
     @PostMapping("/update")
     public Result update(@RequestParam("name")String name, @RequestParam("tel")String mobile, @RequestParam("password")String password, @RequestParam("nickname")String nickname){
@@ -138,6 +146,7 @@ public class UserController {
     /*
      * 修改密码
      * */
+    @RequiresPermissions("user:update")
     @ResponseBody
     @PostMapping("/editpwd")
 //    @RequiresPermissions("user:update")
@@ -155,9 +164,9 @@ public class UserController {
     /*
      * 修改密码
      * */
+//    @RequiresPermissions("role:update")
     @ResponseBody
     @PostMapping("/forgetpassword")
-//    @RequiresPermissions("user:update")
     public Result forgetpassword( @RequestParam("username")String username, @RequestParam("passwordold") String passwordold,  @RequestParam("passwordnew") String passwordnew){
 
         User user = userService.findByName(username);
@@ -177,12 +186,10 @@ public class UserController {
     }
 
 
-
-
-
     /*
     * 删除用户
     * */
+    @RequiresPermissions("user:delete")
     @ResponseBody
     @PostMapping("/deleteUser")
 //    @RequiresPermissions("user:delete")
@@ -204,15 +211,73 @@ public class UserController {
 
     }
 
+//    /*
+//    * 查询所有用户, 无分页*/
+//    @RequiresPermissions("user:select")
+//    @ResponseBody
+//    @GetMapping("/findAllUsers")
+//    public Result<List<UserRoleWrapper>> findAllUsers(){
+//        List<UserRoleWrapper>  userRoles = new ArrayList<UserRoleWrapper>();
+//        try {
+//            List<User> users = null;
+//            try {
+//                users = userService.findAll();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                return Result.failure(ResultCodeEnum.PARAM_ERROR);
+//            }
+//            for (User u:users
+//                 ) {
+//                UserRoleWrapper userRole = new UserRoleWrapper();
+//                String name = u.getName();
+//
+//                try {
+//                    List<Role> roles  = userRoleService.findRoleByUserName(name);
+//                    List<String> rolenames = new ArrayList<String>();
+//                    for (Role r: roles
+//                    ) {
+//                        String rn = r.getRoleName();
+//                        rolenames.add(rn);
+//
+//                    }
+//                    userRole.setUser(u);
+//                    userRole.setRoles(rolenames);
+//                    userRoles.add(userRole);
+//                    System.out.println(userRole);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    return Result.failure(ResultCodeEnum.PARAM_ERROR);
+//                }
+//
+//            }
+//            System.out.println(userRoles);
+//            return Result.success(userRoles);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return Result.failure(ResultCodeEnum.PARAM_ERROR);
+//        }
+//
+//    }
+
     /*
-    * 查询所有用户, 无分页*/
+     * 查询所有用户, 无分页*/
+    @RequiresPermissions("user:select")
     @ResponseBody
     @GetMapping("/findAllUsers")
-//    @RequiresPermissions("user:view")
     public Result<List<User>> findAllUsers(){
-        List<User> users = userService.findAll();
-        return Result.success(users);
+
+            List<User> users = null;
+            try {
+                users = userService.findAll();
+                return Result.success(users);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return Result.failure(ResultCodeEnum.PARAM_ERROR);
+            }
     }
+
+
+
 
 
     /*
@@ -220,6 +285,7 @@ public class UserController {
      * @param page : 表示获取第几页的信息
      * @Param size ：表示每页的大小
      * */
+    @RequiresPermissions("user:select")
     @ResponseBody
     @GetMapping("/findAllUsersGoPage")
 //    @RequiresPermissions("user:view")
@@ -236,8 +302,8 @@ public class UserController {
     /*
     * 查找单个用户， 通过用户名*/
 //    @ResponseBody
+    @RequiresPermissions("user:select")
     @RequestMapping("/findUser")
-//    @RequiresPermissions("user:view")
     public Result<User> findUser(@RequestParam("username")String username){
         User user = userService.findByName(username);
         if(user != null){
@@ -248,6 +314,7 @@ public class UserController {
 
 
     /*获取当前登录的用户信息*/
+    @RequiresUser
     @GetMapping("/getCurrrentUser")
     public Result getCurrentUser(){
         Subject subject = SecurityUtils.getSubject();
@@ -260,6 +327,7 @@ public class UserController {
 
 
     /*获取当前登录的用户信息*/
+    @RequiresUser
     @GetMapping("/getCurrentUserApi")
     public Result getCurrentUserApi(){
 
@@ -281,4 +349,19 @@ public class UserController {
 
 
 
+
+    /*更新用户角色*/
+    @RequiresRoles("admin")
+    @PostMapping("/updateRole")
+    public Result updateRole(@RequestParam("userId") Integer userId, @RequestParam("roleId") Integer roleId){
+
+        try {
+            userRoleService.addRoleforUser(userId, roleId);
+            return Result.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.PARAM_ERROR);
+        }
+
+    }
 }

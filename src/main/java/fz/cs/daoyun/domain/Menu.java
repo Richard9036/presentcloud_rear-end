@@ -17,6 +17,20 @@ public class Menu {
 
     private Integer parentMenuId;
 
+    @Override
+    public String toString() {
+        return "Menu{" +
+                "menuId=" + menuId +
+                ", menuName='" + menuName + '\'' +
+                ", menuIcon='" + menuIcon + '\'' +
+                ", menuLink='" + menuLink + '\'' +
+                ", menuSort=" + menuSort +
+                ", isshow=" + isshow +
+                ", ispage=" + ispage +
+                ", parentMenuId=" + parentMenuId +
+                '}';
+    }
+
     public Integer getMenuId() {
         return menuId;
     }

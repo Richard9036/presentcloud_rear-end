@@ -1,7 +1,7 @@
 package fz.cs.daoyun.mapper;
 
-import fz.cs.daoyun.domain.Dict;
 import fz.cs.daoyun.mapper.provider.ClassesSqlProvider;
+import fz.cs.daoyun.domain.Dict;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.InsertProvider;
@@ -11,9 +11,12 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.type.JdbcType;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+
+@Transactional
 public interface DictMapper {
     @Delete({
         "delete from t_dict",

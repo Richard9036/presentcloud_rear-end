@@ -6,12 +6,13 @@ import fz.cs.daoyun.mapper.DictInfoMapper;
 import fz.cs.daoyun.mapper.DictMapper;
 import fz.cs.daoyun.service.IDictService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
-
+@Transactional
 @Service
 public class DictServiceImpl implements IDictService {
 
